@@ -1,0 +1,28 @@
+{% extends "base.html" %}
+{% block body %}
+<nav class="navbar navbar-expand-lg navbar-expand-md navbar-dark bg-dark py-1">
+    <div class="container">
+        <a class="navbar-brand" href="/"><strong>生物大分子工程</strong>作业系统</a>
+        <button class="navbar-toggler" type="button" data-action="offcanvas-open" data-target="#navbar_main" aria-controls="navbar_main" aria-expanded="false" aria-label="Toggle navigation">
+            <span class="navbar-toggler-icon"></span>
+        </button>
+        <div class="navbar-collapse offcanvas-collapse" id="navbar_main">
+            <ul class="navbar-nav ml-auto align-items-lg-center">
+                <li class="nav-item">
+                    <a class="nav-link" href="/">主页</a>
+                </li>
+            </ul>
+        </div>
+    </div>
+</nav>
+<main class="main">
+    <div class="header align-items-center text-center">
+        <p><h1>欢迎来到生物大分子工程作业系统！</h1></p>
+        <p><h3>请选择您的身份以登录</h3></p>
+    </div>
+    <div class="col-6 offset-3">
+        <p><a href="/student/" class="btn btn-block btn-primary btn-xl">以 学生 身份登录</a></p>
+        <p><a href="/admin/" class="btn btn-block btn-dark btn-xl">以 管理员 身份登录</a></p>
+    </div>
+</main>
+{% endblock %}

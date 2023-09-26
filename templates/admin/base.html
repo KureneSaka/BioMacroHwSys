@@ -1,0 +1,35 @@
+{% extends "base.html" %}
+{% block body %}
+    <nav class="navbar navbar-expand-lg navbar-expand-md navbar-dark bg-dark py-1">
+      <div class="container">
+        <a class="navbar-brand" href="/"><strong>生物大分子工程</strong>作业系统</a>
+        <button class="navbar-toggler" type="button" data-action="offcanvas-open" data-target="#navbar_main" aria-controls="navbar_main" aria-expanded="false" aria-label="Toggle navigation">
+          <span class="navbar-toggler-icon"></span>
+        </button>
+        <div class="navbar-collapse offcanvas-collapse" id="navbar_main">
+          <ul class="navbar-nav ml-auto align-items-lg-center">
+            <li class="nav-item">
+              <a class="nav-link" href="/">主页</a>
+            </li>
+            <li class="nav-item">
+              <a class="nav-link" href="/admin/submit">提交</a>
+            </li>
+            <li class="nav-item">
+              <a class="nav-link" href="/admin/second">附议</a>
+            </li>
+            <li class="nav-item dropdown">
+              <a class="nav-link dropdown-toggle" href="#" id="navbar_main_dropdown_1" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">结果</a>
+              <div class="dropdown-menu" aria-labelledby="navbar_1_dropdown_1">
+                <a class="dropdown-item" href="/questions">全部结果</a>
+                <a class="dropdown-item" href="/personal">个人结果</a>
+              </div>
+            </li>
+          </ul>
+        </div>
+      </div>
+    </nav>
+    <main class="main">
+        {%block mainbody%}
+        {%endblock%}
+    </main>
+{% endblock %}

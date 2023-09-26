@@ -1,0 +1,15 @@
+{% extends "student/base.html" %}
+{% block mainbody %}
+<div class="header align-items-center text-center">
+    <p><h1>欢迎来到生物大分子工程作业系统！</h1></p>
+    <p><h3>您将以 学生 身份登录</h3></p>
+</div>
+<div class="col-6 offset-3">
+    <form action="/student/login" method="post">
+        {% csrf_token %}
+        <p><label>学号</label><input type="text" class="form-control" placeholder="学号" rows="1" name="id" resize="none" value="{{id}}"></p>
+        <p><label>校验码</label><input type="password" class="form-control" placeholder="校验码" rows="1" name="hash" resize="none" value="{{hash}}"></p>
+        <p><button type="submit" class="btn btn-block btn-success btn-primary">登录</button></p>
+    </form>
+</div>
+{% endblock %}
