@@ -1,0 +1,4 @@
+*.pyc
+statics/
+needs.txt
+*.sqlite3
