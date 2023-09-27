@@ -1,0 +1,16 @@
+{% extends "student/base.html" %}
+{% block mainbody %}
+<div class="header align-items-center text-center">
+    <p><h1>提出问题</h1></p>
+    <p><h5>您已提出{{StuQuesNum}}条问题</h5></p>
+</div>
+<form action="/student/submit" method="post">
+    {% csrf_token %}
+    <div class="col-6 offset-3">
+        {% for i in labelList %}
+        <p><label>{{i}}</label><textarea class="form-control" placeholder="{{i}}" rows="3" name="quesList" resize="none"></textarea></p>
+        {% endfor %}
+        <p><button type="submit" class="btn btn-block btn-success btn-primary">提交</button></p>
+    </div>
+</form>
+{% endblock %}
