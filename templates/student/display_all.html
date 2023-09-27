@@ -3,6 +3,11 @@
 <div class="header align-items-center text-center">
     <p><h1>查看结果</h1></p>
     <p><h5>一共有{{quesNum}}条问题</h5></p>
+    <p>
+        <span class="table-primary">深色</span>的为管理员回答
+        <br>
+        <span class="table-info">浅色</span>的为学生回答
+    </p>
 </div>
 <div class="col-10 offset-1">
     <table class="table table-hover align-items-center">
@@ -10,7 +15,7 @@
             <tr>
                 <th scope="col">#</th>
                 <th scope="col">问题</th>
-                <th scope="col">附议/不喜欢</th>
+                <th scope="col">附议<br>不喜欢</th>
                 <th scope="col">时间</th>
             </tr>
         </thead>
@@ -37,8 +42,8 @@
                         </tr>
                     {% else %}
                         <tr>
-                            <td colspan="2" class="bg-secondary">{{j.response}}</td>
-                            <td colspan="2" class="bg-secondary">{{j.date}}<br><span class="text-muted">{{j.time}}<span></td>
+                            <td colspan="2" class="table-info">{{j.response}}</td>
+                            <td colspan="2" class="table-info">{{j.date}}<br><span class="text-muted">{{j.time}}<span></td>
                         </tr>
                     {% endif %}
                 {% endfor %}
