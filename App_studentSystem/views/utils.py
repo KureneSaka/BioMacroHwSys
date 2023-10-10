@@ -71,5 +71,25 @@ def getallquestions():
     return quesBaseInfo.objects.all()
 
 
+def getmyquestions(hash: str):
+    return quesBaseInfo.objects.filter(studentID=hash2id(hash))
+
+
 def getallresponses(pk: int):
     return quesResponseDB.objects.filter(quesID=pk)
+
+
+def is_seconded(quesID: int, hash: str) -> bool:
+    try:
+        quesSecondDB.objects.get(quesID=quesID, studentID=hash2id(hash))
+        return True
+    except:
+        return False
+
+
+def is_disliked(quesID: int, hash: str) -> bool:
+    try:
+        quesDislikeDB.objects.get(quesID=quesID, studentID=hash2id(hash))
+        return True
+    except:
+        return False

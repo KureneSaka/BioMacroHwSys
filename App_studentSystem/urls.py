@@ -16,12 +16,15 @@ Including another URLconf
 """
 from django.contrib import admin
 from django.urls import path
-from .views import login, index, submit, display_all
+from .views import login, index, questions, submit, second
 
 urlpatterns = [
     path('', login.studentlogin),
     path('login', login.checklogin),
     path('index', index.index),
     path('submit',submit.submit),
-    path('display_all',display_all.display_all),
+    path('display_all',questions.display_all),
+    path('display_mine',questions.display_mine),
+    path('second', second.second),
+    path('seconding', second.seconding),
 ]
