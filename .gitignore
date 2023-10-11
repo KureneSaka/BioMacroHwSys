@@ -2,3 +2,4 @@
 statics/
 needs.txt
 *.sqlite3
+caches/
