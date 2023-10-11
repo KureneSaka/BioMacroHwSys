@@ -26,7 +26,8 @@ class quesBaseInfo(models.Model):
 
 class quesResponseDB(models.Model):
     quesID = models.IntegerField()  # question pk
-    response = models.TextField()
+    responded = models.BooleanField(default=True)
+    response = models.TextField(blank=True)
     responderType = models.CharField(
         max_length=1, choices=[("A", "admin"), ("S", "student")])
     responderID = models.IntegerField()  # responder pk

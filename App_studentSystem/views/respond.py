@@ -4,7 +4,7 @@ from django.shortcuts import render, redirect
 from .utils import *
 import random
 
-def evaluate(request:HttpRequest):
+def respond(request:HttpRequest):
     hash, r = checkcookies(request)
     if r:
         return r
@@ -22,59 +22,48 @@ def evaluate(request:HttpRequest):
         originQuesList=list(quesList_raw)
         quesList = list(quesList_raw)
         randomSetting = request.POST.getlist("randomSetting")
-
-        for i in originQuesList:
-            if get_evaluation(i.pk, hash) in randomSetting:
-                quesList.remove(i)
+        if "T" in randomSetting:
+            msg["randomSetting_T"] = True
+            for i in originQuesList:
+                if get_response(i.pk, hash):
+                    quesList.remove(i)
 
         realnum = min(randquesnum, len(quesList))
         quesList_rand = random.sample(quesList, realnum)
         for i in quesList_rand:
             q = {}
             q["question"] = i.question
-            q["evaluation"] = get_evaluation(i.pk, hash)
+            q["response"] = get_response(i.pk, hash)
             questions[i.pk] = q
         msg["questions"] = questions
         msg["realquesnum"] = realnum
-        for i in randomSetting:
-            msg["randomSetting_"+i] = True
 
-    if request.COOKIES.get("evaluated"):
-        msg["evaluate_suc"]=True
+    if request.COOKIES.get("responded"):
+        msg["respond_suc"]=True
 
     outputMsg(msg)
-    ret = render(request, "student/evaluate.html", msg)
-    ret.delete_cookie("evaluated")
+    ret = render(request, "student/respond.html", msg)
+    ret.delete_cookie("responded")
     return ret
 
 
-def evaluating(request:HttpRequest):
+def responding(request:HttpRequest):
     hash, r = checkcookies(request)
     if r:
         return r
-    ret = redirect("/student/evaluate")
+    ret = redirect("/student/respond")
     if request.POST:
-        ret.set_cookie("evaluated",True)
+        ret.set_cookie("responded",True)
         outputPost(request)
         for i, j in request.POST.items():
-            if i[:2] == "_Q":
-                eva_ques(int(i[2:]), hash, j)
+            if i[:2] == "_A":
+                rsp_ques(int(i[2:]), hash, j)
     return ret
 
 
-def eva_ques(quesID: int, hash: str, eva: str):
-    originEvaluate = get_evaluation(quesID, hash)
-    if originEvaluate is eva:
+def rsp_ques(quesID: int, hash: str, rsp: str):
+    originResponse = get_response(quesID, hash)
+    if originResponse == rsp:
         return
     else:
-        q = quesBaseInfo.objects.get(pk=quesID)
-        if originEvaluate == "S":
-            q.seconded = q.seconded-1
-        elif originEvaluate == "D":
-            q.disliked = q.disliked-1
-        if eva == "S":
-            q.seconded = q.seconded+1
-        elif eva == "D":
-            q.disliked = q.disliked+1
-        q.save()
-        set_evaluation(quesID, hash, eva)
+        set_response(quesID, hash, rsp)

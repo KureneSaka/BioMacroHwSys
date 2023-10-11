@@ -77,7 +77,7 @@ def getmyquestions(hash: str):
 
 
 def getallresponses(pk: int):
-    return quesResponseDB.objects.filter(quesID=pk)
+    return quesResponseDB.objects.filter(quesID=pk, responded=True)
 
 
 def get_evaluation(quesID: int, hash: str) -> str:
@@ -93,12 +93,56 @@ def set_evaluation(quesID: int, hash: str, eva: str):
         s = quesEvaluateDB.objects.get(quesID=quesID, studentID=hash2id(hash))
     except:
         s = quesEvaluateDB(quesID=quesID, studentID=hash2id(hash))
-    s.evaluate = eva
+    s.evaluation = eva
     s.save()
 
 
-def is_seconded(quesID: int, hash: str) -> bool:
-    return True if get_evaluation(quesID,hash) == "S" else False
+def get_response(quesID: int, hash: str) -> str:
+    try:
+        s = quesResponseDB.objects.get(
+            quesID=quesID, responderType="S", responderID=hash2id(hash))
+        return s.response if s.responded else ""
+    except:
+        return ""
 
-def is_disliked(quesID: int, hash: str) -> bool:
-    return True if get_evaluation(quesID, hash) == "D" else False
+
+def set_response(quesID: int, hash: str, rsp: str):
+    try:
+        s = quesResponseDB.objects.get(
+            quesID=quesID, responderType="S", responderID=hash2id(hash))
+    except:
+        s = quesResponseDB(quesID=quesID, responderType="S",
+                           responderID=hash2id(hash))
+    s.responded = False if rsp == "" else True
+    s.response = rsp
+    s.save()
+
+def quesList2dict(quesList: list[quesBaseInfo]) -> dict:
+    '''
+    queslist/-seconded
+            |-disliked
+            |-question
+            |-responses/-responderType
+            \          \-response
+    '''
+    questions = {}
+    for i in quesList:
+        q = {}
+        q["seconded"] = i.seconded
+        q["disliked"] = i.disliked
+        q["question"] = i.question
+        q["date"] = i.submitTime.strftime("%y/%m/%d")
+        q["time"] = i.submitTime.strftime("%H:%M")
+        respList = getallresponses(i.pk)
+        responses = {}
+        for j in respList:
+            r = {}
+            r["adminrespond"] = True if j.responderType == "A" else False
+            r["response"] = j.response
+            r["date"] = j.respondTime.strftime("%y/%m/%d")
+            r["time"] = j.respondTime.strftime("%H:%M")
+            responses[j.pk] = r
+        q["columnNum"] = respList.count()+1
+        q["responses"] = responses
+        questions[i.pk] = q
+    return questions
