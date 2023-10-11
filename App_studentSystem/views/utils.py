@@ -1,6 +1,7 @@
 from django.http import HttpRequest, HttpResponse
 from django.shortcuts import render, redirect
 from App_dataSystem.models import *
+from BioMacroHwSys.utils import *
 
 def checkcookies(request: HttpRequest) -> (str, HttpResponse):
     loginCookies = request.COOKIES.get("is_login")
@@ -79,17 +80,25 @@ def getallresponses(pk: int):
     return quesResponseDB.objects.filter(quesID=pk)
 
 
-def is_seconded(quesID: int, hash: str) -> bool:
+def get_evaluation(quesID: int, hash: str) -> str:
     try:
-        quesSecondDB.objects.get(quesID=quesID, studentID=hash2id(hash))
-        return True
+        s = quesEvaluateDB.objects.get(quesID=quesID, studentID=hash2id(hash)).evaluation
+        return s
     except:
-        return False
+        return "N"
 
+
+def set_evaluation(quesID: int, hash: str, eva: str):
+    try:
+        s = quesEvaluateDB.objects.get(quesID=quesID, studentID=hash2id(hash))
+    except:
+        s = quesEvaluateDB(quesID=quesID, studentID=hash2id(hash))
+    s.evaluate = eva
+    s.save()
+
+
+def is_seconded(quesID: int, hash: str) -> bool:
+    return True if get_evaluation(quesID,hash) == "S" else False
 
 def is_disliked(quesID: int, hash: str) -> bool:
-    try:
-        quesDislikeDB.objects.get(quesID=quesID, studentID=hash2id(hash))
-        return True
-    except:
-        return False
+    return True if get_evaluation(quesID, hash) == "D" else False

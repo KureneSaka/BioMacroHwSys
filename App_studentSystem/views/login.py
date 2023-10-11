@@ -32,5 +32,4 @@ def checklogin(request: HttpRequest):
         ret.set_cookie("login_error", e)
         ret.set_cookie("login_id", request.POST["id"])
         ret.set_cookie("login_hash", request.POST["hash"])
-    print(ret.cookies)
     return ret

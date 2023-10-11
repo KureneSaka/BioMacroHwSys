@@ -10,6 +10,26 @@
         <label>来几个问题？</label>
         <div class="input-group">
             <input type="text" class="form-control" placeholder="随便填个数" rows="1" name="randquesnum" resize="none" value="{{randquesnum}}">
+            <div class="input-group-append btn-group btn-group-toggle" data-toggle="buttons">
+                {% if randomSetting_S %}
+                    <button type="button" class="btn btn-outline-success active">
+                        <input type="checkbox" name="randomSetting" value="S" autocomplete="off" checked>隐藏已复议的问题
+                    </button>
+                {% else %}
+                    <button type="button" class="btn btn-outline-success">
+                        <input type="checkbox" name="randomSetting" value="S" autocomplete="off">隐藏已复议的问题
+                    </button>
+                {% endif %}
+                {% if randomSetting_D %}
+                    <button type="button" class="btn btn-outline-danger active">
+                        <input type="checkbox" name="randomSetting" value="D" autocomplete="off" checked>隐藏不喜欢的问题
+                    </button>
+                {% else %}
+                    <button type="button" class="btn btn-outline-danger">
+                        <input type="checkbox" name="randomSetting" value="D" autocomplete="off">隐藏不喜欢的问题
+                    </button>
+                {% endif %}
+            </div>
             <div class="input-group-append">
                 <button class="btn btn-primary" type="submit">开随！</button>
             </div>
@@ -28,7 +48,7 @@
     {% if randquesnum %}
     <div class="alert alert-success alert-dismissible fade show" role="alert">
         <span class="alert-inner--icon"><i class="fas fa-check"></i></span>
-        <span class="alert-inner--text"><strong>随出来啦！</strong><br>下面是为您随出来的{{realquesnum}}条问题，其中不包含您所提出的问题以及您附议过或不喜欢的问题</span>
+        <span class="alert-inner--text"><strong>随出来啦！</strong><br>下面是按照您的需求为您随出来的{{realquesnum}}条问题，其中不包含您所提出的问题</span>
         <button type="button" class="close" data-dismiss="alert" aria-label="Close">
             <span aria-hidden="true">&times;</span>
         </button>
@@ -39,7 +59,7 @@
             <thead class="thead-light">
                 <tr>
                     <th scope="col">#</th>
-                    <th scope="col">问题</th>
+                    <th scope="col" class="w-50">问题</th>
                     <th scope="col"><span class="text-success">附议</span>/<span class="text-danger">不喜欢<span></th>
                 </tr>
             </thead>
@@ -49,14 +69,52 @@
                         <th rowspan="{{i.columnNum}}" scope="row">{{i_}}</th>
                         <td>{{i.question}}</td>
                         <td>
-                            <div class="btn-group btn-group-toggle" data-toggle="buttons">
-                                <label class="btn btn-outline-success">
-                                    <input type="checkbox" name="to_second" value="{{i_}}" autocomplete="off"><span id="second"><i class="fas fa-regular fa-thumbs-up"></i>
-                                </label>
-                                <label class="btn btn-outline-danger">
-                                    <input type="checkbox" name="to_dislike" value="{{i_}}" autocomplete="off"><span id="dislike"><i class="fas fa-regular fa-thumbs-down"></i>
-                                </label>
-                            </div>
+                            {% if i.evaluation == "S" %}
+                                <div class="btn-group btn-group-toggle" data-toggle="buttons">
+                                    <button type="button" class="btn btn-outline-success btn-icon-only active">
+                                        <input type="radio" name="_Q{{i_}}" value="S" autocomplete="off" checked>
+                                        <span class="btn-inner--icon"><i class="fas fa-regular fa-thumbs-up"></i></span>
+                                    </button>
+                                    <button type="button" class="btn btn-outline-dark btn-icon-only">
+                                        <input type="radio" name="_Q{{i_}}" value="N" autocomplete="off">
+                                        <span class="btn-inner--icon"><i class="fas fa-solid fa-minus"></i></span>
+                                    </button>
+                                    <button type="button" class="btn btn-outline-danger btn-icon-only">
+                                        <input type="radio" name="_Q{{i_}}" value="D" autocomplete="off">
+                                        <span class="btn-inner--icon"><i class="fas fa-regular fa-thumbs-down"></i></span>
+                                    </button>
+                                </div>
+                            {% elif i.evaluation == "D" %}
+                                <div class="btn-group btn-group-toggle" data-toggle="buttons">
+                                    <button type="button" class="btn btn-outline-success btn-icon-only">
+                                        <input type="radio" name="_Q{{i_}}" value="S" autocomplete="off">
+                                        <span class="btn-inner--icon"><i class="fas fa-regular fa-thumbs-up"></i></span>
+                                    </button>
+                                    <button type="button" class="btn btn-outline-dark btn-icon-only">
+                                        <input type="radio" name="_Q{{i_}}" value="N" autocomplete="off">
+                                        <span class="btn-inner--icon"><i class="fas fa-solid fa-minus"></i></span>
+                                    </button>
+                                    <button type="button" class="btn btn-outline-danger btn-icon-only active">
+                                        <input type="radio" name="_Q{{i_}}" value="D" autocomplete="off" checked>
+                                        <span class="btn-inner--icon"><i class="fas fa-regular fa-thumbs-down"></i></span>
+                                    </button>
+                                </div>
+                            {% else %}
+                                <div class="btn-group btn-group-toggle" data-toggle="buttons">
+                                    <button type="button" class="btn btn-outline-success btn-icon-only">
+                                        <input type="radio" name="_Q{{i_}}" value="S" autocomplete="off">
+                                        <span class="btn-inner--icon"><i class="fas fa-regular fa-thumbs-up"></i></span>
+                                    </button>
+                                    <button type="button" class="btn btn-outline-dark btn-icon-only active">
+                                        <input type="radio" name="_Q{{i_}}" value="N" autocomplete="off" checked>
+                                        <span class="btn-inner--icon"><i class="fas fa-solid fa-minus"></i></span>
+                                    </button>
+                                    <button type="button" class="btn btn-outline-danger btn-icon-only">
+                                        <input type="radio" name="_Q{{i_}}" value="D" autocomplete="off">
+                                        <span class="btn-inner--icon"><i class="fas fa-regular fa-thumbs-down"></i></span>
+                                    </button>
+                                </div>
+                            {% endif %}
                         </td>
                     </tr>
                 {% endfor %}

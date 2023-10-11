@@ -8,7 +8,7 @@ def submit(request:HttpRequest):
     if r:
         return r
     if request.POST:
-        print(request.POST)
+        outputPost(request)
         quesList=request.POST.getlist("quesList")
         for q in quesList:
             if q:

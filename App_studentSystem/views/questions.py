@@ -39,7 +39,7 @@ def display_all(request:HttpRequest):
     msg["quesNum"] = quesList.count()
     msg["questions"] = {k: v for k, v in sorted(
         questions.items(), key=lambda x: x[1]['seconded'], reverse=True)}
-    print(msg)
+    outputMsg(msg)
     return render(request, "student/display_all.html", msg)
 
 
@@ -78,5 +78,5 @@ def display_mine(request: HttpRequest):
         questions[i.pk] = q
     msg["quesNum"] = quesList.count()
     msg["questions"] = questions
-    print(msg)
+    outputMsg(msg)
     return render(request, "student/display_mine.html", msg)

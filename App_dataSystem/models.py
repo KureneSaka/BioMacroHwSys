@@ -33,11 +33,8 @@ class quesResponseDB(models.Model):
     respondTime = models.DateTimeField(auto_now=True)
 
 
-class quesSecondDB(models.Model):
+class quesEvaluateDB(models.Model):
     quesID = models.IntegerField()  # question pk
     studentID = models.IntegerField()  # seconder pk
-
-
-class quesDislikeDB(models.Model):
-    quesID = models.IntegerField()  # question pk
-    studentID = models.IntegerField()  # disliker pk
+    evaluation = models.CharField(
+        max_length=1, choices=[("S", "seconded"), ("N", "none"), ("D", "dislike")], default="N")

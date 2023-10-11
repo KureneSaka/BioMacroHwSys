@@ -12,7 +12,7 @@ def second(request:HttpRequest):
     quesList_raw = getallquestions().exclude(studentID=hash2id(hash))
     msg["quesNum"] = quesList_raw.count()
     if request.POST:
-        print(request.POST)
+        outputPost(request)
         try:
             randquesnum = int(request.POST["randquesnum"])
             msg["randquesnum"] = randquesnum
@@ -21,9 +21,10 @@ def second(request:HttpRequest):
         questions = {}
         originQuesList=list(quesList_raw)
         quesList = list(quesList_raw)
-        print(originQuesList)
+        randomSetting = request.POST.getlist("randomSetting")
+
         for i in originQuesList:
-            if is_seconded(i.pk, hash) or is_disliked(i.pk, hash):
+            if get_evaluation(i.pk, hash) in randomSetting:
                 quesList.remove(i)
 
         realnum = min(randquesnum, len(quesList))
@@ -31,14 +32,17 @@ def second(request:HttpRequest):
         for i in quesList_rand:
             q = {}
             q["question"] = i.question
+            q["evaluation"] = get_evaluation(i.pk, hash)
             questions[i.pk] = q
         msg["questions"] = questions
         msg["realquesnum"] = realnum
+        for i in randomSetting:
+            msg["randomSetting_"+i] = True
 
     if request.COOKIES.get("seconded"):
         msg["second_suc"]=True
 
-    print(msg)
+    outputMsg(msg)
     ret = render(request, "student/second.html", msg)
     ret.delete_cookie("seconded")
     return ret
@@ -51,19 +55,26 @@ def seconding(request:HttpRequest):
     ret = redirect("/student/second")
     if request.POST:
         ret.set_cookie("seconded",True)
-        print(request.POST)
-        for i in request.POST.getlist("to_second"):
-            second_ques(int(i), hash)
-        for i in request.POST.getlist("to_dislike"):
-            dislike_ques(int(i), hash)
+        outputPost(request)
+        for i, j in request.POST.items():
+            if i[:2] == "_Q":
+                Evaluate(int(i[2:]), hash, j)
     return ret
 
 
-def second_ques(quesID: int, hash: str):
-    q = quesSecondDB(quesID=quesID, studentID=hash2id(hash))
-    q.save()
-
-
-def dislike_ques(quesID: int, hash: str):
-    q = quesDislikeDB(quesID=quesID, studentID=hash2id(hash))
-    q.save()
+def Evaluate(quesID: int, hash: str, eva: str):
+    originEvaluate = get_evaluation(quesID, hash)
+    if originEvaluate is eva:
+        return
+    else:
+        q = quesBaseInfo.objects.get(pk=quesID)
+        if originEvaluate == "S":
+            q.seconded = q.seconded-1
+        elif originEvaluate == "D":
+            q.disliked = q.disliked-1
+        if eva == "S":
+            q.seconded = q.seconded+1
+        elif eva == "D":
+            q.disliked = q.disliked-1
+        q.save()
+        set_evaluation(quesID, hash, eva)
