@@ -16,7 +16,7 @@ Including another URLconf
 """
 from django.contrib import admin
 from django.urls import path
-from .views import login, index, questions, submit, second
+from .views import evaluate, login, index, questions, submit
 
 urlpatterns = [
     path('', login.studentlogin),
@@ -25,6 +25,6 @@ urlpatterns = [
     path('submit',submit.submit),
     path('display_all',questions.display_all),
     path('display_mine',questions.display_mine),
-    path('second', second.second),
-    path('seconding', second.seconding),
+    path('evaluate', evaluate.evaluate),
+    path('evaluating', evaluate.evaluating),
 ]

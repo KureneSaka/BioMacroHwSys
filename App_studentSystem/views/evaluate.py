@@ -4,7 +4,7 @@ from django.shortcuts import render, redirect
 from .utils import *
 import random
 
-def second(request:HttpRequest):
+def evaluate(request:HttpRequest):
     hash, r = checkcookies(request)
     if r:
         return r
@@ -48,7 +48,7 @@ def second(request:HttpRequest):
     return ret
 
 
-def seconding(request:HttpRequest):
+def evaluating(request:HttpRequest):
     hash, r = checkcookies(request)
     if r:
         return r
@@ -58,11 +58,11 @@ def seconding(request:HttpRequest):
         outputPost(request)
         for i, j in request.POST.items():
             if i[:2] == "_Q":
-                Evaluate(int(i[2:]), hash, j)
+                eva_ques(int(i[2:]), hash, j)
     return ret
 
 
-def Evaluate(quesID: int, hash: str, eva: str):
+def eva_ques(quesID: int, hash: str, eva: str):
     originEvaluate = get_evaluation(quesID, hash)
     if originEvaluate is eva:
         return
