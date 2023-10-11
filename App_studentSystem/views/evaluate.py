@@ -43,7 +43,7 @@ def evaluate(request:HttpRequest):
         msg["second_suc"]=True
 
     outputMsg(msg)
-    ret = render(request, "student/second.html", msg)
+    ret = render(request, "student/evaluate.html", msg)
     ret.delete_cookie("seconded")
     return ret
 
