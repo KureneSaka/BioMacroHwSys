@@ -119,13 +119,22 @@ def set_response(quesID: int, hash: str, rsp: str):
 
 def quesList2dict(quesList: list[quesBaseInfo]) -> dict:
     '''
-    queslist/-seconded
-            |-disliked
-            |-question
-            |-responses/-responderType
-            \          \-response
+    question
+    |-seconded\n
+    |-disliked\n
+    |-question\n
+    |-date\n
+    |-time\n
+    |-cnt\n
+    |-rowNum\n
+    |-responses\n
+    | |-adminrespond\n
+    | |-response\n
+    | |-date\n
+    | |-time\n
     '''
     questions = {}
+    cnt = 0
     for i in quesList:
         q = {}
         q["seconded"] = i.seconded
@@ -142,7 +151,9 @@ def quesList2dict(quesList: list[quesBaseInfo]) -> dict:
             r["date"] = j.respondTime.strftime("%y/%m/%d")
             r["time"] = j.respondTime.strftime("%H:%M")
             responses[j.pk] = r
-        q["columnNum"] = respList.count()+1
+        q["rowNum"] = len(responses)+1
         q["responses"] = responses
+        cnt = cnt+1
+        q["cnt"] = cnt
         questions[i.pk] = q
     return questions

@@ -1,56 +1,7 @@
-{% extends "student/base.html" %}
-{% block mainbody %}
-<div class="header align-items-center text-center">
+{% extends "student/display.html" %}
+{% block display_head %}
     <p><h1>查看全部结果</h1></p>
-    <p><h5>一共有{{quesNum}}条问题</h5></p>
-    <p>
-        <span class="table-primary">深色</span>的为管理员回答
-        <br>
-        <span class="table-info">浅色</span>的为学生回答
-    </p>
-</div>
-<div class="col-10 offset-1">
+{% endblock display_head %}
+{% block display_export %}
     <p><a href="dnld" class="btn btn-block btn-success btn-xl">dnld</a></p>
-    <br>
-    <table class="table table-hover align-items-center text-center">
-        <thead class="thead-light">
-            <tr>
-                <th scope="col">#</th>
-                <th scope="col" class="w-50">问题</th>
-                <th scope="col">附议<br>不喜欢</th>
-                <th scope="col">时间</th>
-            </tr>
-        </thead>
-        <tbody>
-            {% for i_,i in questions.items %}
-                <tr>
-                    <th rowspan="{{i.columnNum}}" scope="row">{{i_}}</th>
-                    <td>{{i.question}}</td>
-                    <td>
-                        <div class="text-success">
-                            {{i.seconded}} <i class="fas fa-regular fa-thumbs-up"></i>
-                        </div>
-                        <div class="text-danger">
-                            {{i.disliked}} <i class="fas fa-regular fa-thumbs-down"></i>
-                        </div>
-                    </td>
-                    <td>{{i.date}}<br><span class="text-muted">{{i.time}}<span></td>
-                </tr>
-                {% for j_,j in i.responses.items %}
-                    {% if j.adminrespond %}
-                        <tr>
-                            <td colspan="2" class="table-primary">{{j.response}}</td>
-                            <td colspan="2" class="table-primary">{{j.date}}<br><span class="text-muted">{{j.time}}<span></td>
-                        </tr>
-                    {% else %}
-                        <tr>
-                            <td colspan="2" class="table-info">{{j.response}}</td>
-                            <td colspan="2" class="table-info">{{j.date}}<br><span class="text-muted">{{j.time}}<span></td>
-                        </tr>
-                    {% endif %}
-                {% endfor %}
-            {% endfor %}
-        </tbody>
-    </table>
-</div>
-{% endblock %}
+{% endblock display_export %}
