@@ -12,7 +12,7 @@ def respond(request:HttpRequest):
     quesList = sorted(list(quesList_raw),
                       key=lambda x: x.seconded-x.disliked, reverse=True)
     msg["quesNum"] = quesList_raw.count()
-    outputPost(request)
+
     quesList = quesList.copy()
     _Setting = request.POST.getlist("Setting")
     if "T" in _Setting:
@@ -41,6 +41,7 @@ def respond(request:HttpRequest):
 
     outputMsg(msg)
     ret = render(request, "admin/respond.html", msg)
+    ret.delete_cookie("responded")
     return ret
 
 
@@ -50,6 +51,7 @@ def responding(request:HttpRequest):
         return r
     ret = redirect("/admin/respond")
     if request.POST:
+        ret.set_cookie("responded", True)
         outputPost(request)
         for i, j in request.POST.items():
             if i[:2] == "_A":

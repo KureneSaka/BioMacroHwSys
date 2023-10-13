@@ -28,10 +28,10 @@ def checkhash(hash: str) -> (bool, str):
 
 def checkerror(err: str) -> str:
     e: str
-    if err == "E3":
-        e = "校验码错误"
-    elif err == None:
+    if err == None:
         e = None
+    elif err == "E3":
+        e = "校验码错误"
     else:
         e = "意外错误，情报告管理员"
     return e
@@ -117,7 +117,10 @@ def quesList2dict(quesList: list[quesBaseInfo]) -> dict:
     cnt = 0
     for i in quesList:
         q = {}
-        q["asker"] = stuid2name(i.studentID)
+        try:
+            q["asker"] = stuid2name(i.studentID)
+        except:
+            q["asker"] = "未知"
         q["seconded"] = i.seconded
         q["disliked"] = i.disliked
         q["question"] = i.question
@@ -128,8 +131,11 @@ def quesList2dict(quesList: list[quesBaseInfo]) -> dict:
         for j in respList:
             r = {}
             r["adminrespond"] = True if j.responderType == "A" else False
-            r["responder"] = pk2name(
-                j.responderID)if r["adminrespond"] else stuid2name(j.responderID)
+            try:
+                r["responder"] = pk2name(
+                    j.responderID)if r["adminrespond"] else stuid2name(j.responderID)
+            except:
+                r["responder"] = "未知"
             r["response"] = j.response
             r["date"] = j.respondTime.strftime("%y/%m/%d")
             r["time"] = j.respondTime.strftime("%H:%M")

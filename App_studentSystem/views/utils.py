@@ -35,14 +35,14 @@ def checkhash(id: str, hash: str) -> (bool, str):
 
 def checkerror(err: str) -> str:
     e: str
-    if err == "E1":
+    if err == None:
+        e = None
+    elif err == "E1":
         e = "学号输入错误"
     elif err == "E2":
         e = "学号不在课程中"
     elif err == "E3":
         e = "校验码错误"
-    elif err == None:
-        e = None
     else:
         e = "意外错误，情报告管理员"
     return e

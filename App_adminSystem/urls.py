@@ -16,7 +16,7 @@ Including another URLconf
 """
 from django.contrib import admin
 from django.urls import path
-from .views import login, index, questions, respond, export
+from .views import login, index, questions, respond, export, manage_admin, manage_student
 
 urlpatterns = [
     path('', login.adminlogin),
@@ -25,5 +25,11 @@ urlpatterns = [
     path('display_all', questions.display_all),
     path('respond', respond.respond),
     path('responding', respond.responding),
-    path('export_all',export.export_all),
+    path('export_all', export.export_all),
+    path('manage_student', manage_student.manage_student),
+    path('add_student', manage_student.add_student),
+    path('modify_student', manage_student.modify_student),
+    path('manage_admin', manage_admin.manage_admin),
+    path('add_admin', manage_admin.add_admin),
+    path('modify_admin', manage_admin.modify_admin),
 ]
