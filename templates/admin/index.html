@@ -1,16 +1,12 @@
-{% extends "student/base.html" %}
+{% extends "admin/base.html" %}
 {% block mainbody %}
 <div class="header align-items-center text-center">
     <p><h1>欢迎来到生物大分子工程作业系统！</h1></p>
-    <p><h3>欢迎您 {{StuId}} {{StuName}} 同学</h3></p>
-    <p><h5>您已提出{{StuQuesNum}}条问题，给出了{{StuRespNum}}条回答</h5></p>
+    <p><h3>欢迎您 {{AdminName}} 管理员</h3></p>
 </div>
 <div class="col-6 offset-3">
-    <p><a href="submit" class="btn btn-block btn-success btn-xl">提出问题</a></p>
-    <p><a href="evaluate" class="btn btn-block btn-primary btn-xl">评价问题</a></p>
     <p><a href="respond" class="btn btn-block btn-info btn-xl">回答问题</a></p>
     <p><a href="display_all" class="btn btn-block btn-secondary btn-xl">查看全部结果</a></p>
-    <p><a href="display_mine" class="btn btn-block btn-secondary btn-xl">查看个人结果</a></p>
     <p><a href="/logout" class="btn btn-block btn-dark btn-xl">注销账户</a></p>
 </div>
 {% endblock %}

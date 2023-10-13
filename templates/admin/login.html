@@ -1,4 +1,23 @@
 {% extends "admin/base.html" %}
 {% block mainbody %}
-Admins login page
+<div class="header align-items-center text-center">
+    <p><h1>欢迎来到生物大分子工程作业系统！</h1></p>
+    <p><h3>您将以 管理员 身份登录</h3></p>
+</div>
+<div class="col-6 offset-3">
+    <form action="/admin/login" method="post">
+        {% csrf_token %}
+        <p><label>校验码</label><input type="password" class="form-control" placeholder="校验码" rows="1" name="hash" resize="none" value="{{hash}}"></p>
+        <p><button type="submit" class="btn btn-block btn-success btn-primary">登录</button></p>
+    </form>
+    {% if err %}
+    <div class="alert alert-danger alert-dismissible fade show" role="alert">
+        <span class="alert-inner--icon"><i class="fas fa-times"></i></span>
+        <span class="alert-inner--text"><strong>登录失败！</strong>  {{err}}</span>
+        <button type="button" class="close" data-dismiss="alert" aria-label="Close">
+            <span aria-hidden="true">&times;</span>
+        </button>
+    </div>
+    {% endif %}
+</div>
 {% endblock %}

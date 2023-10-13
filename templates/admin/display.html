@@ -1,4 +1,4 @@
-{% extends "student/base.html" %}
+{% extends "admin/base.html" %}
 {% block mainbody %}
 <div class="header align-items-center text-center">
     {% block display_head %}
@@ -21,6 +21,7 @@
                 <th scope="col">id</th>
                 <th scope="col" class="w-50">问题</th>
                 <th scope="col">附议<br>不喜欢</th>
+                <th scope="col">提问人/<br>回答人</th>
                 <th scope="col">时间</th>
             </tr>
         </thead>
@@ -38,17 +39,20 @@
                             {{i.disliked}} <i class="fas fa-regular fa-thumbs-down"></i>
                         </div>
                     </td>
+                    <td>{{i.asker}}</td>
                     <td>{{i.date}}<br><span class="text-muted">{{i.time}}<span></td>
                 </tr>
                 {% for j_,j in i.responses.items %}
                     {% if j.adminrespond %}
                         <tr>
                             <td colspan="2" class="table-primary">{{j.response}}</td>
+                            <td class="table-primary">{{j.responder}}</td>
                             <td class="table-primary">{{j.date}}<br><span class="text-muted">{{j.time}}<span></td>
                         </tr>
                     {% else %}
                         <tr>
                             <td colspan="2" class="table-info">{{j.response}}</td>
+                            <td class="table-info">{{j.responder}}</td>
                             <td class="table-info">{{j.date}}<br><span class="text-muted">{{j.time}}<span></td>
                         </tr>
                     {% endif %}

@@ -29,5 +29,6 @@ urlpatterns = [
     path('evaluating', evaluate.evaluating),
     path('respond', respond.respond),
     path('responding', respond.responding),
-    path('dnld',export.export_all),
+    path('export_all', export.export_all),
+    path('export_mine', export.export_mine),
 ]

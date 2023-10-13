@@ -30,7 +30,7 @@ class quesResponseDB(models.Model):
     response = models.TextField(blank=True)
     responderType = models.CharField(
         max_length=1, choices=[("A", "admin"), ("S", "student")])
-    responderID = models.IntegerField()  # responder pk
+    responderID = models.IntegerField()  # responder id
     respondTime = models.DateTimeField(auto_now=True)
 
 

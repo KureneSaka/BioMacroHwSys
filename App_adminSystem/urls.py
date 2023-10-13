@@ -16,8 +16,14 @@ Including another URLconf
 """
 from django.contrib import admin
 from django.urls import path
-from .views import login
+from .views import login, index, questions, respond, export
 
 urlpatterns = [
     path('', login.adminlogin),
+    path('login', login.checklogin),
+    path('index', index.index),
+    path('display_all', questions.display_all),
+    path('respond', respond.respond),
+    path('responding', respond.responding),
+    path('export_all',export.export_all),
 ]

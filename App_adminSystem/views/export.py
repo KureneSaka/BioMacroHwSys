@@ -10,10 +10,10 @@ from docx.oxml.parser import parse_xml, OxmlElement
 from docx.shared import Inches, Length
 from docx.enum.table import WD_ALIGN_VERTICAL, WD_TABLE_ALIGNMENT, WD_ROW_HEIGHT_RULE
 from docx.oxml.ns import qn
-
+import time
 
 BASE_DIR = Path(__file__).resolve().parent.parent.parent
-COLUMNS = 6
+COLUMNS = 7
 
 
 def export_all(request: HttpRequest):
@@ -23,25 +23,15 @@ def export_all(request: HttpRequest):
 
     quesList_raw = getallquestions()
     quesList = list(quesList_raw)
-    return quesList2FileResponse(quesList, f"STUDENT_{hash2id(hash)}_DISPLAY_ALL")
-
-
-def export_mine(request: HttpRequest):
-    hash, r = checkcookies(request)
-    if r:
-        return r
-
-    quesList_raw = getmyquestions(hash)
-    quesList = list(quesList_raw)
-    return quesList2FileResponse(quesList, f"STUDENT_{hash2id(hash)}_DISPLAY_MINE")
+    return quesList2FileResponse(quesList, f"ADMIN_{hash2pk(hash)}_DISPLAY_ALL")
 
 
 def quesList2FileResponse(quesList: list[quesBaseInfo], name: str) -> FileResponse:
     doc: docx.document.Document = docx.Document()
     table: Table = doc.add_table(1, COLUMNS)
     table.autofit = True
-    head_l = ["#", "id", "问题", "👍", "👎", "时间"]
-    col_width = [1, 1, 5, 1, 1, 1]
+    head_l = ["#", "id", "问题", "👍", "👎", "操作人", "时间"]
+    col_width = [1, 1, 4, 1, 1, 1, 1]
     rh = table.rows[0]
     rh.height_rule = WD_ROW_HEIGHT_RULE.AUTO
     for i in range(COLUMNS):
@@ -57,7 +47,7 @@ def quesList2FileResponse(quesList: list[quesBaseInfo], name: str) -> FileRespon
         rq = table.add_row()
         rq.height_rule = WD_ROW_HEIGHT_RULE.AUTO
         ques_l = [str(j["cnt"]), str(i), j["question"], str(j["seconded"]),
-                  str(j["disliked"]), j["date"]+"\n"+j["time"]]
+                  str(j["disliked"]), j["asker"], j["date"]+"\n"+j["time"]]
         for _i in range(COLUMNS):
             c = rq.cells[_i]
             c.text = ques_l[_i]
@@ -68,6 +58,7 @@ def quesList2FileResponse(quesList: list[quesBaseInfo], name: str) -> FileRespon
         setCellColor(rq.cells[1], colorDict["table-light"])
         setCellColor(rq.cells[2], "FFFFFF"if not j["cnt"] % 2 else "F0F0F0")
         setCellColor(rq.cells[5], "FFFFFF"if not j["cnt"] % 2 else "F0F0F0")
+        setCellColor(rq.cells[6], "FFFFFF"if not j["cnt"] % 2 else "F0F0F0")
         setCellColor(rq.cells[3], colorDict["table-secondary"])
         setCellColor(rq.cells[4], colorDict["table-secondary"])
 
@@ -78,9 +69,12 @@ def quesList2FileResponse(quesList: list[quesBaseInfo], name: str) -> FileRespon
                          if jj["adminrespond"] else colorDict["table-info"])
             setCellColor(rr.cells[5], colorDict["table-primary"]
                          if jj["adminrespond"] else colorDict["table-info"])
+            setCellColor(rr.cells[6], colorDict["table-primary"]
+                         if jj["adminrespond"] else colorDict["table-info"])
             rr.cells[2].merge(rr.cells[4])
             rr.cells[2].text = jj["response"]
-            rr.cells[5].text = jj["date"]+"\n"+jj["time"]
+            rr.cells[5].text = jj["responder"]
+            rr.cells[6].text = jj["date"]+"\n"+jj["time"]
             setAlignment(rr.cells[5])
             setFont(rr.cells[2])
             setFont(rr.cells[5])

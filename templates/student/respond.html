@@ -44,12 +44,12 @@
             <span aria-hidden="true">&times;</span>
         </button>
     </div>
-    <form action="/student/responding" method="post">
+    <form action="/admin/responding" method="post">
         {% csrf_token %}
         <table class="table table-hover align-items-center text-center">
             <thead class="thead-light">
                 <tr>
-                    <th scope="col">#</th>
+                    <th scope="col">id</th>
                     <th scope="col" class="w-50">问题</th>
                     <th scope="col"><span class="text-info">回答<span></th>
                 </tr>
@@ -57,7 +57,7 @@
             <tbody>
                 {% for i_,i in questions.items %}
                     <tr>
-                        <th rowspan="{{i.columnNum}}" scope="row">{{i_}}</th>
+                        <th scope="row" class="table-light">{{i_}}</th>
                         <td>{{i.question}}</td>
                         <td>
                             <textarea class="form-control" placeholder="回答该问题" rows="3" name="_A{{i_}}" resize="none" value="">{{i.response}}</textarea>
@@ -67,7 +67,7 @@
             </tbody>
         </table>
         <div class="col-10 offset-1">
-            <p><button type="submit" class="btn btn-block btn-success btn-primary">提交</button></p>
+            <p><button type="submit" class="btn btn-block btn-primary">提交</button></p>
         </div>
     </form>
     {% endif %}
