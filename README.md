@@ -2,7 +2,7 @@
 
 PKU《生物大分子工程》课程提交作业系统
 
-***still in progress***
+***demanding for bug reporting***
 
 ## 生物大分子工程
 
