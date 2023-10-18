@@ -3,3 +3,4 @@ statics/
 needs.txt
 *.sqlite3
 caches/
+hash_generator.py
