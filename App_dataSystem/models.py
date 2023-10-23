@@ -20,8 +20,7 @@ class quesBaseInfo(models.Model):
     disliked = models.IntegerField(default=0)  # 点踩次数
     studentID = models.IntegerField()  # 提问人学号
     submitTime = models.DateTimeField(auto_now_add=True)  # 提交时间
-    finalscore = models.DecimalField(
-        max_digits=5, decimal_places=2, default=0)  # 最终得分
+    week = models.IntegerField() #周次pk
 
 
 class quesResponseDB(models.Model):
@@ -32,6 +31,7 @@ class quesResponseDB(models.Model):
         max_length=1, choices=[("A", "admin"), ("S", "student")])
     responderID = models.IntegerField()  # responder id
     respondTime = models.DateTimeField(auto_now=True)
+    week = models.IntegerField()  # 周次pk
 
 
 class quesEvaluateDB(models.Model):
@@ -39,3 +39,12 @@ class quesEvaluateDB(models.Model):
     studentID = models.IntegerField()  # seconder pk
     evaluation = models.CharField(
         max_length=1, choices=[("S", "seconded"), ("N", "none"), ("D", "dislike")], default="N")
+
+
+class weekDB(models.Model):
+    week = models.IntegerField() #周次数字
+    lectureBegin = models.IntegerField() #开始章节
+    lectureFinish = models.IntegerField() #结束章节
+    timeBegin = models.DateTimeField()
+    timeSubmitFinish = models.DateTimeField()
+    timeEvaluateFinish = models.DateTimeField()

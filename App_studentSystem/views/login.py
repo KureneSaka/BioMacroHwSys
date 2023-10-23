@@ -27,6 +27,7 @@ def checklogin(request: HttpRequest):
         ret.delete_cookie("login_id")
         ret.delete_cookie("login_hash")
         ret.set_cookie("is_login", "S" + request.POST["hash"])
+        ret.set_cookie("week", initialweek())
     else:
         ret = redirect("/student/")
         ret.set_cookie("login_error", e)

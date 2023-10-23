@@ -8,6 +8,6 @@ def index(request:HttpRequest):
     hash,r = checkcookies(request)
     if r:
         return r
-    msg = {}
+    msg, week = checkweek(request)
     msg["AdminName"] = hash2name(hash)
     return render(request, "admin/index.html", msg)

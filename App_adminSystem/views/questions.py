@@ -7,8 +7,8 @@ def display_all(request:HttpRequest):
     hash, r = checkcookies(request)
     if r:
         return r
-    msg = {}
-    quesList_raw = getallquestions()
+    msg, week = checkweek(request)
+    quesList_raw = getallquestions().filter(week=week)
     quesList = sorted(list(quesList_raw),
                       key=lambda x: x.seconded-x.disliked, reverse=True)
     msg["quesNum"] = len(quesList)

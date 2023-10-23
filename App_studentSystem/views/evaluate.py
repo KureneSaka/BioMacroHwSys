@@ -8,8 +8,8 @@ def evaluate(request:HttpRequest):
     hash, r = checkcookies(request)
     if r:
         return r
-    msg = {}
-    quesList_raw = getallquestions().exclude(studentID=hash2id(hash))
+    msg, week = checkweek(request)
+    quesList_raw = getallquestions().exclude(studentID=hash2id(hash)).filter(week=week)
     msg["quesNum"] = quesList_raw.count()
     if request.POST:
         outputPost(request)

@@ -9,16 +9,21 @@
         <div class="navbar-collapse offcanvas-collapse" id="navbar_main">
           <ul class="navbar-nav ml-auto align-items-lg-center">
             <li class="nav-item">
+              <class class="navbar-brand"><strong>第{{weeknum}}周</strong>{{lecture}}</a>
+            </li>
+            <li class="nav-item">
               <a class="nav-link" href="/student/">主页</a>
             </li>
             <li class="nav-item">
               <a class="nav-link" href="/student/submit">提交</a>
             </li>
-            <li class="nav-item">
-              <a class="nav-link" href="/student/evaluate">评价</a>
-            </li>
-            <li class="nav-item">
-              <a class="nav-link" href="/student/respond">回答</a>
+            <li class="nav-item dropdown">
+              <a class="nav-link dropdown-toggle" href="#" id="navbar_main_dropdown_1" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">评估</a>
+              <div class="dropdown-menu" aria-labelledby="navbar_1_dropdown_1">
+                <a class="dropdown-item" href="/student/respond_evaluate">评价并回答问题</a>
+                <a class="dropdown-item" href="/student/evaluate">评价问题</a>
+                <a class="dropdown-item" href="/student/respond">回答问题</a>
+              </div>
             </li>
             <li class="nav-item dropdown">
               <a class="nav-link dropdown-toggle" href="#" id="navbar_main_dropdown_1" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">结果</a>

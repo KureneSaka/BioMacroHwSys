@@ -2,6 +2,7 @@ from django.http import HttpRequest, HttpResponse
 from django.shortcuts import render, redirect
 from App_dataSystem.models import *
 from BioMacroHwSys.utils import *
+import datetime
 
 def checkcookies(request: HttpRequest) -> (str, HttpResponse):
     loginCookies = request.COOKIES.get("is_login")
@@ -9,6 +10,36 @@ def checkcookies(request: HttpRequest) -> (str, HttpResponse):
         return loginCookies[1:], None
     else:
         return None, redirect("/")
+
+
+def initialweek() -> int:
+    weeklist = weekDB.objects.all()
+    for i in weeklist:
+        if i.timeBegin < datetime.datetime.now():
+            return i.pk
+    return 0
+
+
+def checkweek(request: HttpRequest):
+    wk = request.COOKIES.get("week")
+    if wk:
+        wk = int(wk)
+    else:
+        wk = initialweek()
+    return initweekdict(wk), wk
+
+
+def initweekdict(wk: int) -> dict:
+    w = weekDB.objects.get(pk=wk)
+    ret = {}
+    ret["weeknum"] = w.week
+    lec_bgn = w.lectureBegin
+    lec_fin = w.lectureFinish
+    if lec_bgn == lec_fin:
+        ret["lecture"] = f"Lec.{lec_bgn}"
+    else:
+        ret["lecture"] = f"Lec.{lec_bgn}~{lec_fin}"
+    return ret
 
 
 def checkhash(hash: str) -> (bool, str):
@@ -83,13 +114,13 @@ def get_response(quesID: int, hash: str) -> str:
         return ""
 
 
-def set_response(quesID: int, hash: str, rsp: str):
+def set_response(quesID: int, hash: str, rsp: str, week: int):
     try:
         s = quesResponseDB.objects.get(
-            quesID=quesID, responderType="A", responderID=hash2pk(hash))
+            quesID=quesID, responderType="A", responderID=hash2pk(hash), week=week)
     except:
         s = quesResponseDB(quesID=quesID, responderType="A",
-                           responderID=hash2pk(hash))
+                           responderID=hash2pk(hash),week=week)
     s.responded = False if rsp == "" else True
     s.response = rsp
     s.save()

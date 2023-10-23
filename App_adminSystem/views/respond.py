@@ -7,17 +7,17 @@ def respond(request:HttpRequest):
     hash, r = checkcookies(request)
     if r:
         return r
-    msg = {}
-    quesList_raw = getallquestions()
-    quesList = sorted(list(quesList_raw),
+    msg, week = checkweek(request)
+    quesList_raw = getallquestions().filter(week=week)
+    originQuesList = sorted(list(quesList_raw),
                       key=lambda x: x.seconded-x.disliked, reverse=True)
     msg["quesNum"] = quesList_raw.count()
 
-    quesList = quesList.copy()
+    quesList = originQuesList.copy()
     _Setting = request.POST.getlist("Setting")
     if "T" in _Setting:
         msg["Setting_T"] = True
-        for i in quesList:
+        for i in originQuesList:
             if get_response(i.pk, hash):
                 quesList.remove(i)
 
@@ -49,19 +49,20 @@ def responding(request:HttpRequest):
     hash, r = checkcookies(request)
     if r:
         return r
+    msg, week = checkweek(request)
     ret = redirect("/admin/respond")
     if request.POST:
         ret.set_cookie("responded", True)
         outputPost(request)
         for i, j in request.POST.items():
             if i[:2] == "_A":
-                rsp_ques(int(i[2:]), hash, j)
+                rsp_ques(int(i[2:]), hash, j,week)
     return ret
 
 
-def rsp_ques(quesID: int, hash: str, rsp: str):
+def rsp_ques(quesID: int, hash: str, rsp: str, week:int):
     originResponse = get_response(quesID, hash)
     if originResponse == rsp:
         return
     else:
-        set_response(quesID, hash, rsp)
+        set_response(quesID, hash, rsp, week)

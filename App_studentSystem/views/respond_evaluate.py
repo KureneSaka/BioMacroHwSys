@@ -4,7 +4,7 @@ from django.shortcuts import render, redirect
 from .utils import *
 import random
 
-def respond(request:HttpRequest):
+def respond_evaluate(request:HttpRequest):
     hash, r = checkcookies(request)
     if r:
         return r
@@ -23,9 +23,11 @@ def respond(request:HttpRequest):
         originQuesList=list(quesList_raw)
         quesList = list(quesList_raw)
         randomSetting = request.POST.getlist("randomSetting")
-        if "T" in randomSetting:
-            msg["randomSetting_T"] = True
-            for i in originQuesList:
+
+        for i in originQuesList:
+            if get_evaluation(i.pk, hash) in randomSetting:
+                quesList.remove(i)
+            elif "R" in randomSetting:
                 if get_response(i.pk, hash):
                     quesList.remove(i)
 
@@ -36,30 +38,36 @@ def respond(request:HttpRequest):
             q["question"] = i.question
             q["response"] = get_response(i.pk, hash)
             questions[i.pk] = q
-        msg["questions"] = questions
+        msg["questions"] = {k: v for k, v in sorted(
+            questions.items(), key=lambda x: x[0])}
         msg["realquesnum"] = realnum
 
-    if request.COOKIES.get("responded"):
-        msg["respond_suc"]=True
+        for i in randomSetting:
+            msg["randomSetting_"+i] = True
+
+    if request.COOKIES.get("resp_eva_ed"):
+        msg["resp_eva_suc"] = True
 
     outputMsg(msg)
-    ret = render(request, "student/respond.html", msg)
-    ret.delete_cookie("responded")
+    ret = render(request, "student/respond_evaluate.html", msg)
+    ret.delete_cookie("resp_eva_ed")
     return ret
 
 
-def responding(request:HttpRequest):
+def respond_evaluate_ing(request: HttpRequest):
     hash, r = checkcookies(request)
     if r:
         return r
     msg, week = checkweek(request)
-    ret = redirect("/student/respond")
+    ret = redirect("/student/respond_evaluate")
     if request.POST:
-        ret.set_cookie("responded",True)
+        ret.set_cookie("resp_eva_ed", True)
         outputPost(request)
         for i, j in request.POST.items():
             if i[:2] == "_A":
                 rsp_ques(int(i[2:]), hash, j, week)
+            if i[:2] == "_Q":
+                eva_ques(int(i[2:]), hash, j)
     return ret
 
 
@@ -69,3 +77,21 @@ def rsp_ques(quesID: int, hash: str, rsp: str, week: int):
         return
     else:
         set_response(quesID, hash, rsp, week)
+
+
+def eva_ques(quesID: int, hash: str, eva: str):
+    originEvaluate = get_evaluation(quesID, hash)
+    if originEvaluate is eva:
+        return
+    else:
+        q = quesBaseInfo.objects.get(pk=quesID)
+        if originEvaluate == "S":
+            q.seconded = q.seconded-1
+        elif originEvaluate == "D":
+            q.disliked = q.disliked-1
+        if eva == "S":
+            q.seconded = q.seconded+1
+        elif eva == "D":
+            q.disliked = q.disliked+1
+        q.save()
+        set_evaluation(quesID, hash, eva)

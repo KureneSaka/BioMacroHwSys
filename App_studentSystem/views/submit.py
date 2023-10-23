@@ -7,14 +7,14 @@ def submit(request:HttpRequest):
     hash, r = checkcookies(request)
     if r:
         return r
+    msg, week = checkweek(request)
     if request.POST:
         outputPost(request)
         quesList=request.POST.getlist("quesList")
         for q in quesList:
             if q:
-                savequestion(hash, q)
-    originQuesNum = hash2quesnum(hash)
-    msg = {}
+                savequestion(hash, q, week)
+    originQuesNum = hash2quesnum(hash, week)
     msg["StuQuesNum"] = originQuesNum
     labelList = []
     for i in range(1, 6):
@@ -23,6 +23,6 @@ def submit(request:HttpRequest):
     return render(request, "student/submit.html", msg)
 
 
-def savequestion(hash: str, ques: str):
-    q = quesBaseInfo(question=ques, studentID=hash2id(hash))
+def savequestion(hash: str, ques: str, week:int):
+    q = quesBaseInfo(question=ques, studentID=hash2id(hash), week=week)
     q.save()

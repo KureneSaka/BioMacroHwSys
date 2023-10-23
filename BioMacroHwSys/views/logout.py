@@ -6,4 +6,5 @@ from django.shortcuts import render, redirect
 def logout(request: HttpRequest):
     ret = redirect("/")
     ret.delete_cookie("is_login")
+    ret.delete_cookie("week")
     return ret

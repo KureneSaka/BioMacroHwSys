@@ -7,8 +7,8 @@ def display_all(request:HttpRequest):
     hash, r = checkcookies(request)
     if r:
         return r
-    msg = {}
-    quesList_raw = getallquestions()
+    msg, week = checkweek(request)
+    quesList_raw = getallquestions().filter(week=week)
     quesList = sorted(list(quesList_raw),
                       key=lambda x: x.seconded-x.disliked, reverse=True)
     msg["quesNum"] = len(quesList)
@@ -21,8 +21,8 @@ def display_mine(request: HttpRequest):
     hash, r = checkcookies(request)
     if r:
         return r
-    msg = {}
-    quesList = list(getmyquestions(hash))
+    msg, week = checkweek(request)
+    quesList = list(getmyquestions(hash).filter(week=week))
     msg["quesNum"] = len(quesList)
     msg["questions"] = quesList2dict(quesList)
     outputMsg(msg)

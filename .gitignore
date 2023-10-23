@@ -3,4 +3,5 @@ statics/
 needs.txt
 *.sqlite3
 caches/
-hash_generator.py
+hash_generator.*
+.vscode/
