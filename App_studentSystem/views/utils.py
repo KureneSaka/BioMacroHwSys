@@ -91,7 +91,7 @@ def hash2pk(hash: str) -> int:
 
 
 def hash2quesnum(hash: str,week: int) -> int:
-    return quesBaseInfo.objects.filter(studentID=hash2id(hash),week=week).count()
+    return quesBaseInfo.objects.filter(studentID=hash2id(hash),week=week,visible=True).count()
 
 
 def hash2respnum(hash: str, week: int) -> int:
@@ -99,11 +99,11 @@ def hash2respnum(hash: str, week: int) -> int:
 
 
 def getallquestions():
-    return quesBaseInfo.objects.all()
+    return quesBaseInfo.objects.filter(visible=True)
 
 
 def getmyquestions(hash: str):
-    return quesBaseInfo.objects.filter(studentID=hash2id(hash))
+    return quesBaseInfo.objects.filter(studentID=hash2id(hash),visible=True)
 
 
 def getallresponses(pk: int):

@@ -11,6 +11,14 @@
     </p>
 </div>
 <div class="col-10 offset-1">
+    <form action="/admin/display_all" method="post">
+        {% csrf_token %}
+        <div class="btn-group btn-block" role="group">
+            <button type="submit" class="btn w-50 btn-secondary">隐藏已被删除的问题</button>
+            <button type="submit" name="Setting" value="I" class="btn w-50 btn-tertiary">显示已被删除的问题</button>
+        </div>
+    </form>
+    <br>
     {% block display_export %}
     {% endblock display_export %}
     <br>
@@ -27,36 +35,69 @@
         </thead>
         <tbody>
             {% for i_,i in questions.items %}
-                <tr>
-                    <th rowspan="{{i.rowNum}}" scope="row" class="table-tertiary">{{i.cnt}}</th>
-                    <td rowspan="{{i.rowNum}}" scope="row" class="table-light">{{i_}}</th>
-                    <td>{{i.question}}</td>
-                    <td class="table-secondary">
-                        <div class="text-success">
-                            {{i.seconded}} <i class="fas fa-regular fa-thumbs-up"></i>
-                        </div>
-                        <div class="text-danger">
-                            {{i.disliked}} <i class="fas fa-regular fa-thumbs-down"></i>
-                        </div>
-                    </td>
-                    <td>{{i.asker}}</td>
-                    <td>{{i.date}}<br><span class="text-muted">{{i.time}}<span></td>
-                </tr>
-                {% for j_,j in i.responses.items %}
-                    {% if j.adminrespond %}
-                        <tr>
-                            <td colspan="2" class="table-primary">{{j.response}}</td>
-                            <td class="table-primary">{{j.responder}}</td>
-                            <td class="table-primary">{{j.date}}<br><span class="text-muted">{{j.time}}<span></td>
-                        </tr>
-                    {% else %}
-                        <tr>
-                            <td colspan="2" class="table-info">{{j.response}}</td>
-                            <td class="table-info">{{j.responder}}</td>
-                            <td class="table-info">{{j.date}}<br><span class="text-muted">{{j.time}}<span></td>
-                        </tr>
-                    {% endif %}
-                {% endfor %}
+                {% if i.visible %}
+                    <tr>
+                        <th rowspan="{{i.rowNum}}" scope="row" class="table-tertiary">{{i.cnt}}</th>
+                        <td rowspan="{{i.rowNum}}" scope="row" class="table-light">{{i_}}</th>
+                        <td>{{i.question}}</td>
+                        <td class="table-secondary">
+                            <div class="text-success">
+                                {{i.seconded}} <i class="fas fa-regular fa-thumbs-up"></i>
+                            </div>
+                            <div class="text-danger">
+                                {{i.disliked}} <i class="fas fa-regular fa-thumbs-down"></i>
+                            </div>
+                        </td>
+                        <td>{{i.asker}}</td>
+                        <td>{{i.date}}<br><span class="text-muted">{{i.time}}<span></td>
+                    </tr>
+                    {% for j_,j in i.responses.items %}
+                        {% if j.adminrespond %}
+                            <tr>
+                                <td colspan="2" class="table-primary">{{j.response}}</td>
+                                <td class="table-primary">{{j.responder}}</td>
+                                <td class="table-primary">{{j.date}}<br><span class="text-muted">{{j.time}}<span></td>
+                            </tr>
+                        {% else %}
+                            <tr>
+                                <td colspan="2" class="table-info">{{j.response}}</td>
+                                <td class="table-info">{{j.responder}}</td>
+                                <td class="table-info">{{j.date}}<br><span class="text-muted">{{j.time}}<span></td>
+                            </tr>
+                        {% endif %}
+                    {% endfor %}
+                {% else %}
+                    <tr>
+                        <th rowspan="{{i.rowNum}}" scope="row" class="table-dark">{{i.cnt}}</th>
+                        <td rowspan="{{i.rowNum}}" scope="row" class="table-dark">{{i_}}</th>
+                        <td class="table-dark">{{i.question}}</td>
+                        <td class="table-dark">
+                            <div class="text-success">
+                                {{i.seconded}} <i class="fas fa-regular fa-thumbs-up"></i>
+                            </div>
+                            <div class="text-danger">
+                                {{i.disliked}} <i class="fas fa-regular fa-thumbs-down"></i>
+                            </div>
+                        </td>
+                        <td class="table-dark">{{i.asker}}</td>
+                        <td class="table-dark">{{i.date}}<br><span class="text-muted">{{i.time}}<span></td>
+                    </tr>
+                    {% for j_,j in i.responses.items %}
+                        {% if j.adminrespond %}
+                            <tr>
+                                <td colspan="2" class="table-dark">{{j.response}}</td>
+                                <td class="table-dark">{{j.responder}}</td>
+                                <td class="table-dark">{{j.date}}<br><span class="text-muted">{{j.time}}<span></td>
+                            </tr>
+                        {% else %}
+                            <tr>
+                                <td colspan="2" class="table-dark">{{j.response}}</td>
+                                <td class="table-dark">{{j.responder}}</td>
+                                <td class="table-dark">{{j.date}}<br><span class="text-muted">{{j.time}}<span></td>
+                            </tr>
+                        {% endif %}
+                    {% endfor %}
+                {% endif %}
             {% endfor %}
         </tbody>
     </table>

@@ -16,11 +16,14 @@ class adminBaseInfo(models.Model):
 
 class quesBaseInfo(models.Model):
     question = models.TextField()  # 问题
+    visible = models.BooleanField(default=True)
     seconded = models.IntegerField(default=0)  # 附议次数
     disliked = models.IntegerField(default=0)  # 点踩次数
     studentID = models.IntegerField()  # 提问人学号
     submitTime = models.DateTimeField(auto_now_add=True)  # 提交时间
     week = models.IntegerField() #周次pk
+    adminsuconded = models.BooleanField(default=False)
+    admindisliked = models.BooleanField(default=False)
 
 
 class quesResponseDB(models.Model):

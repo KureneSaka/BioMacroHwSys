@@ -25,6 +25,8 @@ urlpatterns = [
     path('submit',submit.submit),
     path('display_all',questions.display_all),
     path('display_mine',questions.display_mine),
+    path('deleting', questions.deleting),
+    path('undo_delete', questions.undo_delete),
     path('evaluate', evaluate.evaluate),
     path('evaluating', evaluate.evaluating),
     path('respond_evaluate', respond_evaluate.respond_evaluate),
@@ -36,5 +38,4 @@ urlpatterns = [
     path('next_week', week.next_week),
     path('prev_week', week.prev_week),
     path('change_week', week.change_week),
-
 ]

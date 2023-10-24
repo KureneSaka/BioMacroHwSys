@@ -2,6 +2,43 @@
 {% block display_head %}
     <p><h1>查看我的结果</h1></p>
 {% endblock display_head %}
+
 {% block display_export %}
+    {% if delete_suc %}
+    <div class="alert alert-warning alert-dismissible fade show" role="alert">
+        <span class="alert-inner--icon"><i class="fas fa-exclamation"></i></span>
+        <span class="alert-inner--text"><strong>已删除问题{{delete_suc}}！</strong></span>
+        <form action="/student/undo_delete" method="post">
+            {% csrf_token %}
+            <button type="submit" name="undo_delete" value="{{delete_suc}}" class="undo" aria-label="Undo">撤销</button>
+        </form>
+        <button type="button" class="close" data-dismiss="alert" aria-label="Close">
+            <span aria-hidden="true">&times;</span>
+        </button>
+    </div>
+    {% elif undo_delete_suc %}
+    <div class="alert alert-info alert-dismissible fade show" role="alert">
+        <span class="alert-inner--icon"><i class="fas fa-info"></i></span>
+        <span class="alert-inner--text"><strong>已撤销删除问题{{undo_delete_suc}}！</strong></span>
+        <button type="button" class="close" data-dismiss="alert" aria-label="Close">
+            <span aria-hidden="true">&times;</span>
+        </button>
+    </div>
+    {% endif %}
     <p><a href="export_mine" class="btn btn-block btn-success">导出结果</a></p>
 {% endblock display_export %}
+
+{% block th_delete %}
+<th scope="col"><span class="text-warning">删除</span></th>
+{% endblock th_delete %}
+
+{% block td_delete %}
+<td rowspan="{{i.rowNum}}" scope="row">
+    <form action="/student/deleting" method="post">
+        {% csrf_token %}
+        <button type="submit" name="to_delete" value="{{i_}}" class="btn btn-sm btn-warning btn-icon-only">
+            <span class="btn-inner--icon"><i class="fas fa-solid fa-trash"></i></span>
+        </button>
+    </form>
+</td>
+{% endblock td_delete %}

@@ -137,6 +137,7 @@ def quesList2dict(quesList: list[quesBaseInfo]) -> dict:
     |-time\n
     |-cnt\n
     |-rowNum\n
+    |-visible\n
     |-responses\n
     | |-adminrespond\n
     | |-responder\n
@@ -157,6 +158,7 @@ def quesList2dict(quesList: list[quesBaseInfo]) -> dict:
         q["question"] = i.question
         q["date"] = i.submitTime.strftime("%y/%m/%d")
         q["time"] = i.submitTime.strftime("%H:%M")
+        q["visible"] = i.visible
         respList = getallresponses(i.pk)
         responses = {}
         for j in respList:

@@ -9,10 +9,19 @@ def display_all(request:HttpRequest):
         return r
     msg, week = checkweek(request)
     quesList_raw = getallquestions().filter(week=week)
-    quesList = sorted(list(quesList_raw),
-                      key=lambda x: x.seconded-x.disliked, reverse=True)
-    msg["quesNum"] = len(quesList)
+    originQuesList = sorted(list(quesList_raw),
+                            key=lambda x: x.seconded-x.disliked, reverse=True)
+    quesList = originQuesList.copy()
+    _Setting = request.POST.getlist("Setting")
+    if "I" not in _Setting:
+        msg["Setting_I"] = True
+        for i in originQuesList:
+            if not i.visible:
+                quesList.remove(i)
+
+    msg["quesNum"] = quesList_raw.filter(visible=True).count()
     msg["questions"] = quesList2dict(quesList)
+    msg["realquesnum"] = len(quesList)
     outputMsg(msg)
     return render(request, "admin/display_all.html", msg)
 
