@@ -22,7 +22,7 @@ class quesBaseInfo(models.Model):
     studentID = models.IntegerField()  # 提问人学号
     submitTime = models.DateTimeField(auto_now_add=True)  # 提交时间
     week = models.IntegerField() #周次pk
-    adminsuconded = models.BooleanField(default=False)
+    adminseconded = models.BooleanField(default=False)
     admindisliked = models.BooleanField(default=False)
 
 

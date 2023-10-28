@@ -8,6 +8,10 @@
         <span class="table-primary">深色</span>的为管理员回答
         <br>
         <span class="table-info">浅色</span>的为学生回答
+        <br>
+        <span class="table-success">绿色</span>的为管理员认可的问题
+        <br>
+        <span class="table-danger">红色</span>的为管理员不喜欢的问题
     </p>
 </div>
 <div class="col-10 offset-1">
@@ -40,7 +44,13 @@
                         <th rowspan="{{i.rowNum}}" scope="row" class="table-tertiary">{{i.cnt}}</th>
                         <td rowspan="{{i.rowNum}}" scope="row" class="table-light">{{i_}}</th>
                         <td>{{i.question}}</td>
+                        {% if i.adminseconded %}
+                        <td class="table-success">
+                        {% elif i.admindisliked %}
+                        <td class="table-danger">
+                        {% else %}
                         <td class="table-secondary">
+                        {% endif %}
                             <div class="text-success">
                                 {{i.seconded}} <i class="fas fa-regular fa-thumbs-up"></i>
                             </div>

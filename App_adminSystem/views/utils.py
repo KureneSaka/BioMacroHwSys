@@ -66,12 +66,13 @@ def getallresponses(pk: int):
     return quesResponseDB.objects.filter(quesID=pk, responded=True)
 
 
-def get_evaluation(quesID: int, id: int) -> str:
-    try:
-        s = quesEvaluateDB.objects.get(
-            quesID=quesID, studentID=id).evaluation
-        return s
-    except:
+def get_evaluation(quesID: int) -> str:
+    q = quesBaseInfo.objects.get(pk = quesID)
+    if q.admindisliked:
+        return "D"
+    elif q.adminseconded:
+        return "S"
+    else:
         return "N"
 
 
@@ -108,6 +109,8 @@ def quesList2dict(quesList: list[quesBaseInfo]) -> dict:
     |-cnt\n
     |-rowNum\n
     |-visible\n
+    |-admindisliked\n
+    |-adminseconded\n
     |-responses\n
     | |-adminrespond\n
     | |-responder\n
@@ -129,6 +132,8 @@ def quesList2dict(quesList: list[quesBaseInfo]) -> dict:
         q["date"] = i.submitTime.strftime("%y/%m/%d")
         q["time"] = i.submitTime.strftime("%H:%M")
         q["visible"] = i.visible
+        q["adminseconded"] = i.adminseconded
+        q["admindisliked"] = i.admindisliked
         respList = getallresponses(i.pk)
         responses = {}
         for j in respList:

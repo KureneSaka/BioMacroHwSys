@@ -53,6 +53,7 @@ def respond(request:HttpRequest):
             q["disliked"] = i.disliked
             q["question"] = i.question
             q["response"] = get_response(i.pk,hash)
+            q["evaluation"] = get_evaluation(i.pk)
             q["cnt"] = cnt
             questions[i.pk] = q
 
@@ -79,6 +80,8 @@ def responding(request:HttpRequest):
         for i, j in request.POST.items():
             if i[:2] == "_A":
                 rsp_ques(int(i[2:]), hash, j.strip(), week)
+            if i[:2] == "_Q":
+                eva_ques(int(i[2:]), j)
     return ret
 
 
@@ -88,3 +91,17 @@ def rsp_ques(quesID: int, hash: str, rsp: str, week:int):
         return
     else:
         set_response(quesID, hash, rsp, week)
+
+
+def eva_ques(quesID: int, eva: str):
+    q = quesBaseInfo.objects.get(pk=quesID)
+    if eva == "S":
+        q.adminseconded = True
+        q.admindisliked = False
+    if eva == "N":
+        q.adminseconded = False
+        q.admindisliked = False
+    if eva == "D":
+        q.adminseconded = False
+        q.admindisliked = True
+    q.save()

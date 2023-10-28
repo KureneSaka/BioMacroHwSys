@@ -37,6 +37,7 @@ def respond_evaluate(request:HttpRequest):
             q = {}
             q["question"] = i.question
             q["response"] = get_response(i.pk, hash)
+            q["evaluation"] = get_evaluation(i.pk, hash)
             questions[i.pk] = q
         msg["questions"] = {k: v for k, v in sorted(
             questions.items(), key=lambda x: x[0])}

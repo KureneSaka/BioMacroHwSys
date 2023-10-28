@@ -12,7 +12,7 @@ def export_all(request: HttpRequest):
     if r:
         return r
     msg, week = checkweek(request)
-    quesList_raw = getallquestions().filter(week=week)
+    quesList_raw = getallquestions().filter(week=week, visible=True)
     quesList = list(quesList_raw)
     export_setting=[]
     if request.POST:
