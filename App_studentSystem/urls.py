@@ -16,7 +16,8 @@ Including another URLconf
 """
 from django.contrib import admin
 from django.urls import path
-from .views import evaluate, login, index, questions, submit, export, respond, respond_evaluate, week
+
+from .views import evaluate, login, index, questions, submit, export, respond, respond_evaluate
 
 urlpatterns = [
     path('', login.studentlogin),
@@ -35,7 +36,4 @@ urlpatterns = [
     path('responding', respond.responding),
     path('export_all', export.export_all),
     path('export_mine', export.export_mine),
-    path('next_week', week.next_week),
-    path('prev_week', week.prev_week),
-    path('change_week', week.change_week),
 ]

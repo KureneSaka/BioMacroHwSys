@@ -13,7 +13,7 @@ def submit(request:HttpRequest):
         quesList=request.POST.getlist("quesList")
         for q in quesList:
             if q:
-                savequestion(hash, q, week)
+                savequestion(hash, q.strip(), week)
     originQuesNum = hash2quesnum(hash, week)
     msg["StuQuesNum"] = originQuesNum
     labelList = []

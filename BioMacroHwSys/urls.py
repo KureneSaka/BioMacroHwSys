@@ -16,11 +16,15 @@ Including another URLconf
 """
 from django.contrib import admin
 from django.urls import path, include
-from .views import login, logout
+from .views import login, logout, week
 
 urlpatterns = [
     path('', login.loginIndex),
     path('student/', include("App_studentSystem.urls")),
     path('admin/', include("App_adminSystem.urls")),
     path('logout',logout.logout),
+    path('next_week', week.next_week),
+    path('prev_week', week.prev_week),
+    path('change_week', week.change_week),
+
 ]

@@ -59,7 +59,7 @@ def responding(request:HttpRequest):
         outputPost(request)
         for i, j in request.POST.items():
             if i[:2] == "_A":
-                rsp_ques(int(i[2:]), hash, j, week)
+                rsp_ques(int(i[2:]), hash, j.strip(), week)
     return ret
 
 

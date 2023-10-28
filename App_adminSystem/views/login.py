@@ -4,7 +4,7 @@ from django.shortcuts import render, redirect
 from .utils import *
 
 def adminlogin(request: HttpRequest):
-    msg = {}
+    msg, week = checkweek(request)
     msg["err"] = checkerror(request.COOKIES.get("login_error"))
     msg["hash"] = request.COOKIES.get("login_hash")
     if not msg["hash"]:

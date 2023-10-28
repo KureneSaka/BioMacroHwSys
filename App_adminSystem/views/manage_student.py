@@ -8,7 +8,6 @@ def manage_student(request: HttpRequest):
     hash, r = checkcookies(request)
     if r:
         return r
-    print(request.COOKIES)
     msg = stuInfoDict()
     opsuc = request.COOKIES.get("operate_suc")
     if opsuc:

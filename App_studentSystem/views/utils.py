@@ -2,43 +2,13 @@ from django.http import HttpRequest, HttpResponse
 from django.shortcuts import render, redirect
 from App_dataSystem.models import *
 from BioMacroHwSys.utils import *
-import datetime
+
 def checkcookies(request: HttpRequest) -> (str, HttpResponse):
     loginCookies = request.COOKIES.get("is_login")
     if loginCookies and loginCookies[0] == 'S':
         return loginCookies[1:], None
     else:
         return None, redirect("/")
-
-
-def initialweek()->int:
-    weeklist=weekDB.objects.all()
-    for i in weeklist:
-        if i.timeBegin<datetime.datetime.now():
-            return i.pk
-    return 0
-
-
-def checkweek(request: HttpRequest):
-    wk = request.COOKIES.get("week")
-    if wk:
-        wk = int(wk)
-    else:
-        wk = initialweek()
-    return initweekdict(wk), wk
-
-
-def initweekdict(wk:int)->dict:
-    w = weekDB.objects.get(pk=wk)
-    ret = {}
-    ret["weeknum"] = w.week
-    lec_bgn = w.lectureBegin
-    lec_fin = w.lectureFinish
-    if lec_bgn == lec_fin:
-        ret["lecture"] = f"Lec.{lec_bgn}"
-    else:
-        ret["lecture"] = f"Lec.{lec_bgn}~{lec_fin}"
-    return ret
 
 
 def checkhash(id: str, hash: str) -> (bool, str):
