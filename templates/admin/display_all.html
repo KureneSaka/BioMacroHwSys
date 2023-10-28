@@ -3,5 +3,54 @@
     <p><h1>查看全部结果</h1></p>
 {% endblock display_head %}
 {% block display_export %}
-    <p><a href="export_all" class="btn btn-block btn-success">导出结果</a></p>
+<div class="header align-items-center text-center">
+    <p><h5>导出问题为文档</h5></p>
+    <p>
+        导出设置
+        <br>
+        按钮为边框则未选中，按钮为填充则选中
+    </p>
+</div>
+    <form action="/admin/export_all" method="post">
+        {% csrf_token %}
+        <p><div class="btn-group-vertical btn-block" role="group">
+            <div class="btn-group btn-group-toggle btn-block" data-toggle="buttons">
+                <button type="button" class="btn btn-outline-tertiary active">
+                    <input type="checkbox" name="export_setting" value="show_index" autocomplete="off" checked>
+                    显示问题序号
+                </button>
+                <button type="button" class="btn btn-outline-dark">
+                    <input type="checkbox" name="export_setting" value="show_id" autocomplete="off">
+                    显示问题编号
+                </button>
+                <button type="button" class="btn btn-light" disabled>
+                    无法隐藏问题
+                </button>
+                <button type="button" class="btn btn-outline-success active">
+                    <input type="checkbox" name="export_setting" value="show_evaluation" autocomplete="off" checked>
+                    显示评价
+                </button>
+            </div>
+            <div class="btn-group btn-group-toggle" data-toggle="buttons">
+                <button type="button" class="btn btn-outline-primary active">
+                    <input type="checkbox" name="export_setting" value="show_admin_response" autocomplete="off" checked>
+                    显示管理员回答
+                </button>
+                <button type="button" class="btn btn-outline-info active">
+                    <input type="checkbox" name="export_setting" value="show_student_response" autocomplete="off" checked>
+                    显示学生回答
+                </button>
+                <button type="button" class="btn btn-outline-warning active">
+                    <input type="checkbox" name="export_setting" value="show_operator" autocomplete="off" checked>
+                    显示操作人
+                </button>
+                <button type="button" class="btn btn-outline-danger">
+                    <input type="checkbox" name="export_setting" value="show_time" autocomplete="off">
+                    显示时间
+                </button>
+            </div>
+            <button type="submit" class="btn btn-block btn-success">导出！</button>
+        </div></p>
+    </form>
+
 {% endblock display_export %}

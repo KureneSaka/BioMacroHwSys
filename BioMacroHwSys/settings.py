@@ -39,7 +39,8 @@ INSTALLED_APPS = [
     'django.contrib.staticfiles',
     'App_adminSystem',
     'App_studentSystem',
-    'App_dataSystem'
+    'App_dataSystem',
+    'App_exportfile',
 ]
 
 MIDDLEWARE = [
