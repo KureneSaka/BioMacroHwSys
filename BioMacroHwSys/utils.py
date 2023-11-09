@@ -18,9 +18,11 @@ def outputMsg(msg: dict):
 
 def initialweek() -> int:
     weeklist = weekDB.objects.all()
+    ret:weekDB=weeklist[0]
     for i in weeklist:
-        if i.timeBegin < datetime.datetime.now():
-            return i.pk
+        if i.timeBegin > datetime.datetime.now():
+            return ret.pk
+        ret=i
     return 0
 
 
