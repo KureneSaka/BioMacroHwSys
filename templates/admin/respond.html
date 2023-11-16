@@ -115,6 +115,10 @@
                 {% endfor %}
             </tbody>
         </table>
+        {% if Setting_R %}
+        <input name="Setting" value="R" hidden>
+        {% endif %}
+        <input name="pgnm" value="{{page}}" hidden>
         <p><button type="submit" class="btn btn-block btn-primary">提交</button></p>
         </form>
         <p>
@@ -122,8 +126,8 @@
                 {% csrf_token %}
                 {% if Setting_R %}
                 <input name="Setting" value="R" hidden>
-                <input name="pgnm" value="{{page}}" hidden>
                 {% endif %}
+                <input name="pgnm" value="{{page}}" hidden>
                 <div class="input-group">
                     <div class="input-group-prepend">
                         <button class="btn btn-secondary" type="submit" name="page_setting" value="P">上一页</button>

@@ -14,10 +14,11 @@ def respond(request:HttpRequest):
     msg["quesNum"] = quesList_raw.count()
 
     quesList = originQuesList.copy()
-    pagenum = 1
+    pagenum = request.COOKIES.get("pgnm")
+    pagenum = int(pagenum) + 1 if pagenum else 1
     if request.POST:
         _Setting = request.POST.getlist("Setting")
-        if "R" in _Setting:
+        if "R" in _Setting or request.COOKIES.get("Setting_R")=="R":
             msg["Setting_R"] = True
             for i in originQuesList:
                 if get_response(i.pk, hash):
@@ -65,6 +66,9 @@ def respond(request:HttpRequest):
     outputMsg(msg)
     ret = render(request, "admin/respond.html", msg)
     ret.delete_cookie("responded")
+    ret.delete_cookie("pgnm")
+    ret.delete_cookie("Setting_R")
+
     return ret
 
 
@@ -82,6 +86,8 @@ def responding(request:HttpRequest):
                 rsp_ques(int(i[2:]), hash, j.strip(), week)
             if i[:2] == "_Q":
                 eva_ques(int(i[2:]), j)
+        ret.set_cookie("pgnm",request.POST["pgnm"])
+        ret.set_cookie("Setting_R","R" if request.POST.get("Setting") else "N")
     return ret
 
 
