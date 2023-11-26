@@ -13,11 +13,19 @@ def display_all(request:HttpRequest):
                             key=lambda x: x.seconded-x.disliked, reverse=True)
     quesList = originQuesList.copy()
     _Setting = request.POST.getlist("Setting")
+    for i in originQuesList:
+        if "I" not in _Setting and not i.visible:
+            quesList.remove(i)
+        elif "S" in _Setting and not i.adminseconded:
+            quesList.remove(i)
+        elif "D" in _Setting and not i.admindisliked:
+            quesList.remove(i)
     if "I" not in _Setting:
         msg["Setting_I"] = True
-        for i in originQuesList:
-            if not i.visible:
-                quesList.remove(i)
+    elif "S" in _Setting:
+        msg["Setting_S"] = True
+    elif "D" in _Setting:
+        msg["Setting_D"] = True
 
     msg["quesNum"] = quesList_raw.filter(visible=True).count()
     msg["questions"] = quesList2dict(quesList)

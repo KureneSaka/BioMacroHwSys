@@ -56,6 +56,24 @@ def respond(request:HttpRequest):
             q["response"] = get_response(i.pk,hash)
             q["evaluation"] = get_evaluation(i.pk)
             q["cnt"] = cnt
+            respList = getallresponses(i.pk)
+            responses = {}
+            for j in respList:
+                if j.responderType == "A":
+                    continue
+                r = {}
+                r["adminrespond"] = True if j.responderType == "A" else False
+                try:
+                    r["responder"] = pk2name(
+                        j.responderID)if r["adminrespond"] else stuid2name(j.responderID)
+                except:
+                    r["responder"] = "未知"
+                r["response"] = j.response
+                r["date"] = j.respondTime.strftime("%y/%m/%d")
+                r["time"] = j.respondTime.strftime("%H:%M")
+                responses[j.pk] = r
+            q["rowNum"] = len(responses)+2
+            q["responses"] = responses
             questions[i.pk] = q
 
     msg["questions"] = questions

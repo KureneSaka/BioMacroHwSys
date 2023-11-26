@@ -21,6 +21,11 @@
             <button type="submit" class="btn w-50 btn-secondary">隐藏已被删除的问题</button>
             <button type="submit" name="Setting" value="I" class="btn w-50 btn-tertiary">显示已被删除的问题</button>
         </div>
+        <div class="btn-group btn-block" role="group">
+            <button type="submit" name="Setting" value="S" class="btn w-50 btn-success">只显示认可的问题</button>
+            <button type="submit" class="btn w-50 btn-primary">显示所有问题</button>
+            <button type="submit" name="Setting" value="D" class="btn w-50 btn-danger">只显示不喜欢的问题</button>
+        </div>
     </form>
     <br>
     {% block display_export %}
