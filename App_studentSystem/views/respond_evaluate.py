@@ -38,6 +38,15 @@ def respond_evaluate(request:HttpRequest):
             q["question"] = i.question
             q["response"] = get_response(i.pk, hash)
             q["evaluation"] = get_evaluation(i.pk, hash)
+            respList = getallresponses(i.pk).exclude(responderID=hash2id(hash))
+            responses = {}
+            for j in respList:
+                r = {}
+                r["adminrespond"] = True if j.responderType == "A" else False
+                r["response"] = j.response
+                responses[j.pk] = r
+            q["rowNum"] = len(responses)+1
+            q["responses"] = responses
             questions[i.pk] = q
         msg["questions"] = {k: v for k, v in sorted(
             questions.items(), key=lambda x: x[0])}

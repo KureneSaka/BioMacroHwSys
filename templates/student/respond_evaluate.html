@@ -76,7 +76,7 @@
             <tbody>
                 {% for i_,i in questions.items %}
                     <tr>
-                        <th scope="row" class="table-light">{{i_}}</th>
+                        <th rowspan="{{i.rowNum}}" scope="row" class="table-light">{{i_}}</th>
                         <td>{{i.question}}</td>
                         <td>
                             {% if i.evaluation == "S" %}
@@ -130,6 +130,16 @@
                             <textarea class="form-control" placeholder="回答该问题" rows="3" name="_A{{i_}}" resize="none" value="">{{i.response}}</textarea>
                         </td>
                     </tr>
+                    {% for j_,j in i.responses.items %}
+                    <tr>
+                        {% if j.adminrespond %}
+                        <td colspan="3" class="table-primary">{{j.response}}</td>
+                        {% else %}
+                        <td colspan="3" class="table-info">{{j.response}}</td>
+                        {% endif %}
+                    </tr>
+                    {% endfor %}
+
                 {% endfor %}
             </tbody>
         </table>
