@@ -8,9 +8,11 @@
         </button>
         <div class="navbar-collapse offcanvas-collapse" id="navbar_main">
           <ul class="navbar-nav ml-auto align-items-lg-center">
+            {% if weeknum %}
             <li class="nav-item">
-              <class class="navbar-brand"><strong>第{{weeknum}}周</strong>{{lecture}}</a>
+              <span class="navbar-brand"><strong>第{{weeknum}}周</strong>{{lecture}}</span>
             </li>
+            {% endif %}
             <li class="nav-item">
               <a class="nav-link" href="/">主页</a>
             </li>
@@ -20,12 +22,18 @@
             <li class="nav-item">
               <a class="nav-link" href="/admin/display_all">结果</a>
             </li>
+            <li class="nav-item">
+              <a class="nav-link" href="/admin/manage_week">周次</a>
+            </li>
             <li class="nav-item dropdown">
               <a class="nav-link dropdown-toggle" href="#" id="navbar_main_dropdown_1" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">人员</a>
               <div class="dropdown-menu" aria-labelledby="navbar_1_dropdown_1">
                 <a class="dropdown-item" href="/admin/manage_student">学生信息</a>
                 <a class="dropdown-item" href="/admin/manage_admin">管理员信息</a>
               </div>
+            </li>
+            <li class="nav-item">
+              <a class="nav-link" href="/admin/change_pwd">修改密码</a>
             </li>
             <li class="nav-item">
               <a class="nav-link" href="/logout">注销</a>
@@ -38,4 +46,15 @@
         {%block mainbody%}
         {%endblock%}
     </main>
+    <script>
+      // 表头「全选」：将同一表单中指定 name 的勾选框全部勾选/取消（跳过 disabled）
+      document.addEventListener('change', function (e) {
+        const sel = e.target && e.target.closest ? e.target.closest('.select-all') : null;
+        if (!sel) return;
+        const form = sel.closest('form');
+        if (!form) return;
+        const boxes = form.querySelectorAll('input[name="' + sel.dataset.col + '"]:not(:disabled)');
+        for (let i = 0; i < boxes.length; i++) boxes[i].checked = sel.checked;
+      });
+    </script>
 {% endblock %}

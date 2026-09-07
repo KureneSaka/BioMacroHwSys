@@ -5,9 +5,9 @@ from .utils import *
 
 
 def index(request:HttpRequest):
-    hash,r = checkcookies(request)
+    pk,r = checkcookies(request)
     if r:
         return r
     msg, week = checkweek(request)
-    msg["AdminName"] = hash2name(hash)
+    msg["AdminName"] = request.user.first_name
     return render(request, "admin/index.html", msg)

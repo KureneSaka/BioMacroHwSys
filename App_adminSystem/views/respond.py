@@ -4,7 +4,7 @@ from django.shortcuts import render, redirect
 from .utils import *
 
 def respond(request:HttpRequest):
-    hash, r = checkcookies(request)
+    pk, r = checkcookies(request)
     if r:
         return r
     msg, week = checkweek(request)
@@ -21,14 +21,17 @@ def respond(request:HttpRequest):
         if "R" in _Setting or request.COOKIES.get("Setting_R")=="R":
             msg["Setting_R"] = True
             for i in originQuesList:
-                if get_response(i.pk, hash):
+                if get_response(i.pk, pk):
                     quesList.remove(i)
         page_setting = request.POST.getlist("page_setting")
         if page_setting:
             try:
                 pagenum = int(request.POST["pagenum"])
-            except:
-                pagenum = int(request.POST["pgnm"])
+            except (KeyError, ValueError):
+                try:
+                    pagenum = int(request.POST.get("pgnm", "1"))
+                except (KeyError, ValueError):
+                    pagenum = 1
             if "S" in page_setting:
                 pagenum = pagenum
             if "P" in page_setting:
@@ -53,7 +56,7 @@ def respond(request:HttpRequest):
             q["seconded"] = i.seconded
             q["disliked"] = i.disliked
             q["question"] = i.question
-            q["response"] = get_response(i.pk,hash)
+            q["response"] = get_response(i.pk,pk)
             q["evaluation"] = get_evaluation(i.pk)
             q["cnt"] = cnt
             respList = getallresponses(i.pk)
@@ -66,7 +69,7 @@ def respond(request:HttpRequest):
                 try:
                     r["responder"] = pk2name(
                         j.responderID)if r["adminrespond"] else stuid2name(j.responderID)
-                except:
+                except Exception:
                     r["responder"] = "未知"
                 r["response"] = j.response
                 r["date"] = j.respondTime.strftime("%y/%m/%d")
@@ -91,7 +94,7 @@ def respond(request:HttpRequest):
 
 
 def responding(request:HttpRequest):
-    hash, r = checkcookies(request)
+    pk, r = checkcookies(request)
     if r:
         return r
     msg, week = checkweek(request)
@@ -101,7 +104,7 @@ def responding(request:HttpRequest):
         outputPost(request)
         for i, j in request.POST.items():
             if i[:2] == "_A":
-                rsp_ques(int(i[2:]), hash, j.strip(), week)
+                rsp_ques(int(i[2:]), pk, j.strip(), week)
             if i[:2] == "_Q":
                 eva_ques(int(i[2:]), j)
         ret.set_cookie("pgnm",request.POST["pgnm"])
@@ -109,12 +112,12 @@ def responding(request:HttpRequest):
     return ret
 
 
-def rsp_ques(quesID: int, hash: str, rsp: str, week:int):
-    originResponse = get_response(quesID, hash)
+def rsp_ques(quesID: int, pk: int, rsp: str, week:int):
+    originResponse = get_response(quesID, pk)
     if originResponse == rsp:
         return
     else:
-        set_response(quesID, hash, rsp, week)
+        set_response(quesID, pk, rsp, week)
 
 
 def eva_ques(quesID: int, eva: str):

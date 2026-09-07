@@ -5,7 +5,7 @@ from App_exportfile.export import exportfile_withsetting
 
 
 def export_all(request: HttpRequest):
-    hash, r = checkcookies(request)
+    sid, r = checkcookies(request)
     if r:
         return r
     msg, week = checkweek(request)
@@ -14,20 +14,20 @@ def export_all(request: HttpRequest):
     export_setting = []
     if request.POST:
         export_setting = request.POST.getlist("export_setting")
-    return exportfile_withsetting(quesList, f"STUDENT_{hash2id(hash)}_DISPLAY_ALL", export_setting)
+    return exportfile_withsetting(quesList, f"STUDENT_{sid}_DISPLAY_ALL", export_setting)
 
 
 def export_mine(request: HttpRequest):
-    hash, r = checkcookies(request)
+    sid, r = checkcookies(request)
     if r:
         return r
     msg, week = checkweek(request)
-    quesList_raw = getmyquestions(hash).filter(week=week)
+    quesList_raw = getmyquestions(sid).filter(week=week)
     quesList = list(quesList_raw)
     export_setting = []
     if request.POST:
         export_setting = request.POST.getlist("export_setting")
-    return exportfile_withsetting(quesList, f"STUDENT_{hash2id(hash)}_DISPLAY_MINE", export_setting)
+    return exportfile_withsetting(quesList, f"STUDENT_{sid}_DISPLAY_MINE", export_setting)
 
 # BASE_DIR = Path(__file__).resolve().parent.parent.parent
 # COLUMNS = 6

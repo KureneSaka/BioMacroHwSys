@@ -5,12 +5,12 @@ from .utils import *
 
 
 def index(request:HttpRequest):
-    hash,r = checkcookies(request)
+    sid,r = checkcookies(request)
     if r:
         return r
     msg, week = checkweek(request)
-    msg["StuName"] = hash2name(hash)
-    msg["StuId"] = hash2id(hash)
-    msg["StuQuesNum"] = hash2quesnum(hash,week)
-    msg["StuRespNum"] = hash2respnum(hash,week)
+    msg["StuName"] = name_of(sid)
+    msg["StuId"] = sid
+    msg["StuQuesNum"] = hash2quesnum(sid,week)
+    msg["StuRespNum"] = hash2respnum(sid,week)
     return render(request, "student/index.html", msg)

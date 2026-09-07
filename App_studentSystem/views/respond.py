@@ -1,23 +1,23 @@
 # -*- coding: utf-8 -*-
 from django.http import HttpRequest
 from django.shortcuts import render, redirect
+from django.contrib import messages
 from .utils import *
 import random
 
 def respond(request:HttpRequest):
-    hash, r = checkcookies(request)
+    sid, r = checkcookies(request)
     if r:
         return r
     msg, week = checkweek(request)
-    quesList_raw = getallquestions().exclude(
-        studentID=hash2id(hash)).filter(week=week)
+    quesList_raw = getallquestions().exclude(studentID=sid).filter(week=week)
     msg["quesNum"] = quesList_raw.count()
     if request.POST:
         outputPost(request)
         try:
             randquesnum = int(request.POST["randquesnum"])
             msg["randquesnum"] = randquesnum
-        except:
+        except (KeyError, ValueError):
             randquesnum = 0
         questions = {}
         originQuesList=list(quesList_raw)
@@ -26,7 +26,7 @@ def respond(request:HttpRequest):
         if "T" in randomSetting:
             msg["randomSetting_T"] = True
             for i in originQuesList:
-                if get_response(i.pk, hash):
+                if get_response(i.pk, sid):
                     quesList.remove(i)
 
         realnum = min(randquesnum, len(quesList))
@@ -34,7 +34,7 @@ def respond(request:HttpRequest):
         for i in quesList_rand:
             q = {}
             q["question"] = i.question
-            q["response"] = get_response(i.pk, hash)
+            q["response"] = get_response(i.pk, sid)
             questions[i.pk] = q
         msg["questions"] = questions
         msg["realquesnum"] = realnum
@@ -49,23 +49,27 @@ def respond(request:HttpRequest):
 
 
 def responding(request:HttpRequest):
-    hash, r = checkcookies(request)
+    sid, r = checkcookies(request)
     if r:
         return r
     msg, week = checkweek(request)
     ret = redirect("/student/respond")
     if request.POST:
-        ret.set_cookie("responded",True)
         outputPost(request)
+        closed = check_evaluate_open(week)
+        if closed:
+            messages.error(request, closed)
+            return ret
+        ret.set_cookie("responded",True)
         for i, j in request.POST.items():
             if i[:2] == "_A":
-                rsp_ques(int(i[2:]), hash, j.strip(), week)
+                rsp_ques(int(i[2:]), sid, j.strip(), week)
     return ret
 
 
-def rsp_ques(quesID: int, hash: str, rsp: str, week: int):
-    originResponse = get_response(quesID, hash)
+def rsp_ques(quesID: int, sid: int, rsp: str, week: int):
+    originResponse = get_response(quesID, sid)
     if originResponse == rsp:
         return
     else:
-        set_response(quesID, hash, rsp, week)
+        set_response(quesID, sid, rsp, week)

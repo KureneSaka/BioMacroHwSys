@@ -2,16 +2,16 @@
 from django.http import HttpRequest
 from django.shortcuts import render, redirect
 from ..utils import *
+from ..auth import is_admin
 
 
 def loginIndex(request: HttpRequest):
-    loginCookies = request.COOKIES.get("is_login")
-    ret:HttpRequest
-    if loginCookies:
-        if loginCookies[0] == 'S':
-            ret = redirect("student/index")
-        elif loginCookies[0]=='A':
-            ret = redirect("admin/index")
+    ret = None
+    if request.user.is_authenticated:
+        if is_admin(request.user):
+            ret = redirect("/admin/index")
+        else:
+            ret = redirect("/student/index")
     else:
         ret = render(request, "login.html")
     if not request.COOKIES.get("week"):

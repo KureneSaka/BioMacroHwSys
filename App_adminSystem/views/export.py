@@ -8,7 +8,7 @@ from App_exportfile.export import exportfile_withsetting
 
 
 def export_all(request: HttpRequest):
-    hash, r = checkcookies(request)
+    pk, r = checkcookies(request)
     if r:
         return r
     msg, week = checkweek(request)
@@ -17,7 +17,7 @@ def export_all(request: HttpRequest):
     export_setting=[]
     if request.POST:
         export_setting = request.POST.getlist("export_setting")
-    return exportfile_withsetting(quesList, f"ADMIN_{hash2pk(hash)}_DISPLAY_ALL", export_setting)
+    return exportfile_withsetting(quesList, f"ADMIN_{pk}_DISPLAY_ALL", export_setting)
     # return quesList2FileResponse(quesList, f"ADMIN_{hash2pk(hash)}_DISPLAY_ALL")
 
 

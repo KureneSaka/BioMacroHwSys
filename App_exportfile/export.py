@@ -147,6 +147,7 @@ def exportfile(quesList: list[quesBaseInfo],
             lc.cells[-1].merge(lc.cells[-int(j["rowNum"])])
     file_path = BASE_DIR/"caches" / \
         f"{name}_{time.strftime('%y%m%d_%H%M')}.docx"
+    file_path.parent.mkdir(parents=True, exist_ok=True)  # auto-create caches/ if missing
     doc.save(file_path)
 
     response = FileResponse(open(file_path, 'rb'))

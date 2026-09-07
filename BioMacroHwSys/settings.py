@@ -11,6 +11,7 @@ https://docs.djangoproject.com/en/4.2/ref/settings/
 """
 
 from pathlib import Path
+import os
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
@@ -19,13 +20,29 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 # Quick-start development settings - unsuitable for production
 # See https://docs.djangoproject.com/en/4.2/howto/deployment/checklist/
 
+# --- Environment-driven settings (development-friendly defaults) ---
+# For production set DJANGO_DEBUG=false and provide DJANGO_SECRET_KEY plus
+# DJANGO_ALLOWED_HOSTS (comma separated, e.g. "example.com,www.example.com").
+
+
+def _env_bool(name: str, default: bool) -> bool:
+    val = os.environ.get(name)
+    if val is None:
+        return default
+    return val.strip().lower() in ("1", "true", "yes", "on")
+
+
 # SECURITY WARNING: keep the secret key used in production secret!
-SECRET_KEY = 'django-insecure-z7vvc3ta0@5wzd5!82-u5*v&9)d31)h^ldd(87a9x8wcmm4_37'
+SECRET_KEY = os.environ.get(
+    "DJANGO_SECRET_KEY",
+    "django-insecure-z7vvc3ta0@5wzd5!82-u5*v&9)d31)h^ldd(87a9x8wcmm4_37")
 
 # SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = True
+DEBUG = _env_bool("DJANGO_DEBUG", True)
 
-ALLOWED_HOSTS = ['localhost']
+ALLOWED_HOSTS = [h.strip() for h in
+                 os.environ.get("DJANGO_ALLOWED_HOSTS", "localhost,127.0.0.1")
+                 .split(",") if h.strip()]
 
 
 # Application definition
@@ -83,6 +100,12 @@ DATABASES = {
         'NAME': BASE_DIR / 'db.sqlite3',
     }
 }
+
+
+# Session
+# https://docs.djangoproject.com/en/4.2/ref/settings/#sessions
+# Keep users logged in for 7 days across browser restarts
+SESSION_COOKIE_AGE = 7 * 24 * 3600
 
 
 # Password validation

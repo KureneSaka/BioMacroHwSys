@@ -16,7 +16,7 @@ Including another URLconf
 """
 from django.contrib import admin
 from django.urls import path
-from .views import login, index, questions, respond, export, manage_admin, manage_student
+from .views import login, index, questions, respond, export, manage_admin, manage_student, manage_week
 
 urlpatterns = [
     path('', login.adminlogin),
@@ -29,7 +29,13 @@ urlpatterns = [
     path('manage_student', manage_student.manage_student),
     path('add_student', manage_student.add_student),
     path('modify_student', manage_student.modify_student),
+    path('import_student_csv', manage_student.import_student_csv),
+    path('export_import_pwds', manage_student.export_import_pwds),
     path('manage_admin', manage_admin.manage_admin),
     path('add_admin', manage_admin.add_admin),
     path('modify_admin', manage_admin.modify_admin),
+    path('manage_week', manage_week.manage_week),
+    path('add_week', manage_week.add_week),
+    path('modify_week', manage_week.modify_week),
+    path('generate_weeks', manage_week.generate_weeks),
 ]

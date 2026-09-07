@@ -1,22 +1,24 @@
 # -*- coding: utf-8 -*-
 from django.http import HttpRequest
 from django.shortcuts import render, redirect
+from django.contrib import messages
+from django.db import transaction
 from .utils import *
 import random
 
 def evaluate(request:HttpRequest):
-    hash, r = checkcookies(request)
+    sid, r = checkcookies(request)
     if r:
         return r
     msg, week = checkweek(request)
-    quesList_raw = getallquestions().exclude(studentID=hash2id(hash)).filter(week=week)
+    quesList_raw = getallquestions().exclude(studentID=sid).filter(week=week)
     msg["quesNum"] = quesList_raw.count()
     if request.POST:
         outputPost(request)
         try:
             randquesnum = int(request.POST["randquesnum"])
             msg["randquesnum"] = randquesnum
-        except:
+        except (KeyError, ValueError):
             randquesnum = 0
         questions = {}
         originQuesList=list(quesList_raw)
@@ -24,7 +26,7 @@ def evaluate(request:HttpRequest):
         randomSetting = request.POST.getlist("randomSetting")
 
         for i in originQuesList:
-            if get_evaluation(i.pk, hash) in randomSetting:
+            if get_evaluation(i.pk, sid) in randomSetting:
                 quesList.remove(i)
 
         realnum = min(randquesnum, len(quesList))
@@ -32,7 +34,7 @@ def evaluate(request:HttpRequest):
         for i in quesList_rand:
             q = {}
             q["question"] = i.question
-            q["evaluation"] = get_evaluation(i.pk, hash)
+            q["evaluation"] = get_evaluation(i.pk, sid)
             questions[i.pk] = q
         msg["questions"] = questions
         msg["realquesnum"] = realnum
@@ -49,32 +51,37 @@ def evaluate(request:HttpRequest):
 
 
 def evaluating(request:HttpRequest):
-    hash, r = checkcookies(request)
+    sid, r = checkcookies(request)
     if r:
         return r
+    msg, week = checkweek(request)
     ret = redirect("/student/evaluate")
     if request.POST:
-        ret.set_cookie("evaluated",True)
         outputPost(request)
+        closed = check_evaluate_open(week)
+        if closed:
+            messages.error(request, closed)
+            return ret
+        ret.set_cookie("evaluated",True)
         for i, j in request.POST.items():
             if i[:2] == "_Q":
-                eva_ques(int(i[2:]), hash, j)
+                eva_ques(int(i[2:]), sid, j)
     return ret
 
 
-def eva_ques(quesID: int, hash: str, eva: str):
-    originEvaluate = get_evaluation(quesID, hash)
-    if originEvaluate is eva:
-        return
-    else:
-        q = quesBaseInfo.objects.get(pk=quesID)
-        if originEvaluate == "S":
-            q.seconded = q.seconded-1
-        elif originEvaluate == "D":
-            q.disliked = q.disliked-1
+def eva_ques(quesID: int, sid: int, eva: str):
+    with transaction.atomic():
+        q = quesBaseInfo.objects.select_for_update().get(pk=quesID)
+        old = get_evaluation(quesID, sid)
+        if old == eva:
+            return
+        if old == "S":
+            q.seconded = max(q.seconded - 1, 0)
+        elif old == "D":
+            q.disliked = max(q.disliked - 1, 0)
         if eva == "S":
-            q.seconded = q.seconded+1
+            q.seconded += 1
         elif eva == "D":
-            q.disliked = q.disliked+1
+            q.disliked += 1
         q.save()
-        set_evaluation(quesID, hash, eva)
+        set_evaluation(quesID, sid, eva)

@@ -16,10 +16,12 @@ Including another URLconf
 """
 from django.contrib import admin
 from django.urls import path, include
-from .views import login, logout, week
+from .views import login, logout, week, change_pwd
 
 urlpatterns = [
     path('', login.loginIndex),
+    path('student/change_pwd', change_pwd.change_pwd),
+    path('admin/change_pwd', change_pwd.change_pwd),
     path('student/', include("App_studentSystem.urls")),
     path('admin/', include("App_adminSystem.urls")),
     path('logout',logout.logout),

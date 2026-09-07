@@ -5,7 +5,7 @@ from docx.shared import Inches, Length
 from docx.enum.table import WD_ALIGN_VERTICAL, WD_TABLE_ALIGNMENT, WD_ROW_HEIGHT_RULE
 from docx.oxml.ns import qn
 from App_dataSystem.models import *
-from App_adminSystem.views.utils import quesList2dict
+from App_dataSystem.display import quesList2dict
 
 colorDict = {"table-primary": "C3DFFF",
              "table-secondary": "F9FBFF",

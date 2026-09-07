@@ -1,0 +1,28 @@
+{% extends base_template %}
+{% block mainbody %}
+<div class="col-6 offset-3">
+    <div class="header align-items-center text-center">
+        <p><h1>修改密码</h1></p>
+        {% if must %}
+        <p><h5 class="text-warning">首次登录须设置新密码后方可使用系统</h5></p>
+        {% endif %}
+    </div>
+    <form action="" method="post">
+        {% csrf_token %}
+        <p><label>原密码</label><input type="password" class="form-control" name="old_password" required></p>
+        <p><label>新密码</label><input type="password" class="form-control" name="new_password1" required></p>
+        <p><label>确认新密码</label><input type="password" class="form-control" name="new_password2" required></p>
+        <p><button type="submit" class="btn btn-block btn-warning">保存新密码</button></p>
+    </form>
+    {% if err %}
+    <br>
+    <div class="alert alert-danger alert-dismissible fade show" role="alert">
+        <span class="alert-inner--icon"><i class="fas fa-times"></i></span>
+        <span class="alert-inner--text"><strong>修改失败！</strong>  {{err}}</span>
+        <button type="button" class="close" data-dismiss="alert" aria-label="Close">
+            <span aria-hidden="true">&times;</span>
+        </button>
+    </div>
+    {% endif %}
+</div>
+{% endblock %}

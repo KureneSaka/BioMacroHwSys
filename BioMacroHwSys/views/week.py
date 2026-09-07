@@ -12,7 +12,7 @@ def next_week(request: HttpRequest):
     wk = wk + 1
     try:
         weekDB.objects.get(pk=wk)
-    except:
+    except weekDB.DoesNotExist:
         wk = wk - 1
     ret = redirect("/")
     ret.set_cookie("week", wk)
@@ -27,7 +27,7 @@ def prev_week(request: HttpRequest):
     wk = wk - 1
     try:
         weekDB.objects.get(pk=wk)
-    except:
+    except weekDB.DoesNotExist:
         wk = wk + 1
     ret = redirect("/")
     ret.set_cookie("week", wk)
@@ -43,5 +43,5 @@ def change_week(request: HttpRequest):
             w = weekDB.objects.get(week=wk)
             ret.set_cookie("week", w.pk)
             return ret
-        except:
+        except (KeyError, ValueError, weekDB.DoesNotExist):
             return ret

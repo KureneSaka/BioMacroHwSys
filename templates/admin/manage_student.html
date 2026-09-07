@@ -11,14 +11,81 @@
             <label><h4>添加学生</h4></label>
         </div>
         <div class="input-group">
-            <input type="text" class="form-control" placeholder="学号" rows="1" name="id" resize="none">
-            <input type="text" class="form-control" placeholder="姓名" rows="1" name="name" resize="none">
-            <input type="text" class="form-control" placeholder="校验码" rows="1" name="hash" resize="none">
+            <input type="text" class="form-control" placeholder="学号" name="id">
+            <input type="text" class="form-control" placeholder="姓名" name="name">
             <div class="input-group-append">
                 <button class="btn btn-warning" type="submit">添加学生</button>
             </div>
         </div>
+        <small class="form-text text-muted">添加后将自动生成随机初始密码并在此显示一次；学生首次登录须修改密码。</small>
     </form>
+
+    <hr>
+    <div class="header align-items-center text-center">
+        <p><h4>从 CSV 导入学生</h4></p>
+        <p><small class="text-muted">支持课程网「小组与用户-小组」页编辑模式下导出的 groupmembers CSV（需含 User Name 与 First Name 列）；学号重复时将整批中止并点名。</small></p>
+    </div>
+    <form action="/admin/import_student_csv" method="post" enctype="multipart/form-data" id="import_form">
+        {% csrf_token %}
+        <div class="input-group">
+            <input type="file" class="form-control" accept=".csv,text/csv" name="csv" id="import_file">
+            <div class="input-group-append">
+                <button class="btn btn-success" type="submit" id="import_btn">导入学生</button>
+            </div>
+        </div>
+        <small id="import_hint" class="form-text text-warning"></small>
+    </form>
+    <script>
+      (function () {
+        var form = document.getElementById('import_form');
+        if (!form) return;
+        form.addEventListener('submit', function () {
+          var btn = document.getElementById('import_btn');
+          var hint = document.getElementById('import_hint');
+          if (btn) { btn.disabled = true; btn.textContent = '正在导入…'; }
+          if (hint) { hint.textContent = '正在导入并校验，请勿重复点击或关闭页面…'; }
+        });
+      })();
+    </script>
+    {% if import_err %}
+    <br>
+    <div class="alert alert-danger alert-dismissible fade show" role="alert">
+        <span class="alert-inner--icon"><i class="fas fa-times"></i></span>
+        <span class="alert-inner--text"><strong>导入失败！</strong>  {{import_err}}</span>
+        <button type="button" class="close" data-dismiss="alert" aria-label="Close">
+            <span aria-hidden="true">&times;</span>
+        </button>
+    </div>
+    {% endif %}
+    {% if imp_created %}
+    <br>
+    <div class="alert alert-success" role="alert">
+        <span class="alert-inner--icon"><i class="fas fa-check"></i></span>
+        <span class="alert-inner--text"><strong>导入成功！</strong> 共创建 {{imp_created}} 名学生，初始密码如下，请复制分发（首次登录须修改密码）。</span>
+    </div>
+    <table class="table table-hover align-items-center text-center">
+        <thead class="thead-light">
+            <tr>
+                <th scope="col">#</th>
+                <th scope="col">学号 (User Name)</th>
+                <th scope="col">姓名</th>
+                <th scope="col">初始密码</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for s in imported %}
+            <tr>
+                <th scope="row" class="table-tertiary">{{forloop.counter}}</th>
+                <td>{{s.username}}</td>
+                <td>{{s.name}}</td>
+                <td><code>{{s.password}}</code></td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+    <a class="btn btn-outline-primary btn-block" href="/admin/export_import_pwds">下载本批初始密码 CSV（用于发布给学生）</a>
+    {% endif %}
+
     {% if err %}
     <br>
     <div class="alert alert-danger alert-dismissible fade show" role="alert">
@@ -60,6 +127,17 @@
     </div>
     {% endif %}
 
+    {% if pwd %}
+    <br>
+    <div class="alert alert-success alert-dismissible fade show" role="alert">
+        <span class="alert-inner--icon"><i class="fas fa-check"></i></span>
+        <span class="alert-inner--text"><strong>初始密码已生成！</strong>  请记录并分发给对应账号：<b>{{pwd}}</b>（首次登录须修改密码）</span>
+        <button type="button" class="close" data-dismiss="alert" aria-label="Close">
+            <span aria-hidden="true">&times;</span>
+        </button>
+    </div>
+    {% endif %}
+
     <div class="header align-items-center text-center">
         <p><h4>修改学生信息</h4></p>
     </div>
@@ -68,11 +146,16 @@
         <table class="table table-hover align-items-center text-center">
             <thead class="thead-light">
                 <tr>
-                    <th scope="col"></th>
+                    <th scope="col">
+                        <div class="custom-control custom-checkbox">
+                            <input type="checkbox" class="custom-control-input select-all" id="select_all_stu" data-col="to_delete">
+                            <label class="custom-control-label" for="select_all_stu" title="全选/取消全选"></label>
+                        </div>
+                    </th>
                     <th scope="col">#</th>
                     <th scope="col">学号</th>
                     <th scope="col">姓名</th>
-                    <th scope="col">校验码</th>
+                    <th scope="col">重置密码</th>
                 </tr>
             </thead>
             <tbody>
@@ -85,22 +168,22 @@
                             </div>
                         </td>
                         <th scope="row" class="table-tertiary">{{i_}}</th>
-                        <td>
-                            <textarea class="form-control" placeholder="学号" rows="1" name="_M{{i_}}" resize="none">{{i.studentID}}</textarea>
-                        </td>
+                        <td class="table-light">{{i.studentID}}</td>
                         <td>
                             <textarea class="form-control" placeholder="姓名" rows="1" name="_M{{i_}}" resize="none">{{i.name}}</textarea>
                         </td>
                         <td>
-                            <textarea class="form-control" placeholder="校验码" rows="1" name="_M{{i_}}" resize="none">{{i.hash}}</textarea>
+                            <button type="submit" class="btn btn-sm btn-warning" name="to_reset" value="{{i_}}">重置密码</button>
                         </td>
                     </tr>
                 {% endfor %}
             </tbody>
         </table>
+        <div class="form-text text-muted mb-2">勾选学生后点「重置所选并导出 CSV」会立即生成新密码并下载文件，原密码即刻失效（首次登录仍须修改密码）。</div>
         <div class="btn-group btn-block" role="group">
             <button type="submit" name="modify_selection" value="Delete" class="btn w-25 btn-danger">删除所选学生</button>
-            <button type="submit" name="modify_selection" value="Modify" class="btn w-75 btn-warning">提交信息修改</button>
+            <button type="submit" name="modify_selection" value="ResetPwdExport" class="btn w-25 btn-success">重置所选并导出 CSV</button>
+            <button type="submit" name="modify_selection" value="Modify" class="btn w-50 btn-warning">提交信息修改</button>
         </div>
     </form>
 </div>

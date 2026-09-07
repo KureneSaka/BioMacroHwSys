@@ -4,7 +4,7 @@ from django.shortcuts import render, redirect
 from .utils import *
 
 def display_all(request:HttpRequest):
-    hash, r = checkcookies(request)
+    pk, r = checkcookies(request)
     if r:
         return r
     msg, week = checkweek(request)

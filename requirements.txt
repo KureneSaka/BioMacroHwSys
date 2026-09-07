@@ -1,0 +1,4 @@
+# BioMacroHWsys 运行依赖
+# 实测环境：conda 环境 BioMacroHWsys（Python 3.13）
+Django==6.1.1
+python-docx==1.2.0

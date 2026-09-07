@@ -3,8 +3,12 @@
 <div class="header align-items-center text-center">
     <p><h1>欢迎来到生物大分子工程作业系统！</h1></p>
     <p><h3>欢迎您 {{StuId}} {{StuName}} 同学</h3></p>
+    {% if weeknum %}
     <p><h3>您现在正在操作第<span class="text-danger">{{weeknum}}</span>周</h3></p>
     <p><h5>内容为<span class="text-danger">{{lecture}}</span></h5></p>
+    {% else %}
+    <p><h3 class="text-warning">本周安排尚未开放，请耐心等待或联系任课老师。</h3></p>
+    {% endif %}
     <p><h5>您已提出{{StuQuesNum}}条问题，给出了{{StuRespNum}}条回答</h5></p>
 </div>
 <div class="col-6 offset-3">

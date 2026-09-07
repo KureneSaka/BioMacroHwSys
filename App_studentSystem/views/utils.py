@@ -1,36 +1,22 @@
 from django.http import HttpRequest, HttpResponse
 from django.shortcuts import render, redirect
+from django.contrib.auth.models import User
 from App_dataSystem.models import *
 from BioMacroHwSys.utils import *
+from BioMacroHwSys.auth import (CHANGE_PWD_PATHS, is_student, student_sid,
+                                must_change_password, pwd_url)
 
-def checkcookies(request: HttpRequest) -> (str, HttpResponse):
-    loginCookies = request.COOKIES.get("is_login")
-    if loginCookies and loginCookies[0] == 'S':
-        return loginCookies[1:], None
-    else:
+def checkcookies(request: HttpRequest) -> (int, HttpResponse):
+    """Student guard. Returns (student id, None) or (None, redirect).
+
+    Also forces a password change before using the system when the
+    must_change_password flag is set (except on the change-pwd page).
+    """
+    if not is_student(request.user):
         return None, redirect("/")
-
-
-def checkhash(id: str, hash: str) -> (bool, str):
-    try:
-        try:
-            int(id)
-        except:
-            raise Exception("E1")
-        s: stuBaseInfo
-        try:
-            s = stuBaseInfo.objects.get(studentID=int(id))
-        except:
-            raise Exception("E2")
-        if s.hash==hash:
-            return True, None
-        else:
-            raise Exception("E3")
-    except Exception as e:
-        err=str(e)
-        if not(err == "E1" or err == "E2" or err == "E3"):
-            err = "E9"
-        return False, err
+    if request.path not in CHANGE_PWD_PATHS and must_change_password(request.user):
+        return None, redirect(pwd_url(request.user))
+    return student_sid(request.user), None
 
 
 def checkerror(err: str) -> str:
@@ -38,81 +24,79 @@ def checkerror(err: str) -> str:
     if err == None:
         e = None
     elif err == "E1":
-        e = "学号输入错误"
+        e = "学号格式有误"
     elif err == "E2":
-        e = "学号不在课程中"
+        e = "账号不存在，请确认学号是否正确"
     elif err == "E3":
-        e = "校验码错误"
+        e = "密码错误"
+    elif err == "E4":
+        e = "该账号为管理员，请从管理员入口登录"
     else:
         e = "意外错误，情报告管理员"
     return e
 
 
-def hash2name(hash:str)->str:
-    return stuBaseInfo.objects.get(hash = hash).name
+def name_of(sid: int) -> str:
+    """Student full name by student id (User.first_name)."""
+    try:
+        return User.objects.get(username=str(sid)).first_name
+    except User.DoesNotExist:
+        return "未知"
 
 
-def hash2id(hash: str) -> int:
-    return stuBaseInfo.objects.get(hash=hash).studentID
+def hash2quesnum(sid: int, week: int) -> int:
+    return quesBaseInfo.objects.filter(studentID=sid, week=week, visible=True).count()
 
 
-def hash2pk(hash: str) -> int:
-    return stuBaseInfo.objects.get(hash=hash).pk
-
-
-def hash2quesnum(hash: str,week: int) -> int:
-    return quesBaseInfo.objects.filter(studentID=hash2id(hash),week=week,visible=True).count()
-
-
-def hash2respnum(hash: str, week: int) -> int:
-    return quesResponseDB.objects.filter(responderType="S", responderID=hash2id(hash), responded=True, week=week).count()
+def hash2respnum(sid: int, week: int) -> int:
+    return quesResponseDB.objects.filter(responderType="S", responderID=sid, responded=True, week=week).count()
 
 
 def getallquestions():
     return quesBaseInfo.objects.filter(visible=True)
 
 
-def getmyquestions(hash: str):
-    return quesBaseInfo.objects.filter(studentID=hash2id(hash),visible=True)
+def getmyquestions(sid: int):
+    return quesBaseInfo.objects.filter(studentID=sid, visible=True)
 
 
 def getallresponses(pk: int):
     return quesResponseDB.objects.filter(quesID=pk, responded=True)
 
 
-def get_evaluation(quesID: int, hash: str) -> str:
+def get_evaluation(quesID: int, sid: int) -> str:
     try:
-        s = quesEvaluateDB.objects.get(quesID=quesID, studentID=hash2id(hash)).evaluation
+        s = quesEvaluateDB.objects.get(quesID=quesID, studentID=sid).evaluation
         return s
-    except:
+    except quesEvaluateDB.DoesNotExist:
         return "N"
 
 
-def set_evaluation(quesID: int, hash: str, eva: str):
+def set_evaluation(quesID: int, sid: int, eva: str):
     try:
-        s = quesEvaluateDB.objects.get(quesID=quesID, studentID=hash2id(hash))
-    except:
-        s = quesEvaluateDB(quesID=quesID, studentID=hash2id(hash))
+        s = quesEvaluateDB.objects.get(quesID=quesID, studentID=sid)
+    except quesEvaluateDB.DoesNotExist:
+        s = quesEvaluateDB(quesID=quesID, studentID=sid)
     s.evaluation = eva
     s.save()
 
 
-def get_response(quesID: int, hash: str) -> str:
+def get_response(quesID: int, sid: int) -> str:
     try:
         s = quesResponseDB.objects.get(
-            quesID=quesID, responderType="S", responderID=hash2id(hash))
+            quesID=quesID, responderType="S", responderID=sid)
         return s.response if s.responded else ""
-    except:
+    except quesResponseDB.DoesNotExist:
         return ""
 
 
-def set_response(quesID: int, hash: str, rsp: str, week:int):
+def set_response(quesID: int, sid: int, rsp: str, week: int):
     try:
         s = quesResponseDB.objects.get(
-            quesID=quesID, responderType="S", responderID=hash2id(hash), week=week)
-    except:
+            quesID=quesID, responderType="S", responderID=sid, week=week)
+    except quesResponseDB.DoesNotExist:
         s = quesResponseDB(quesID=quesID, responderType="S",
-                           responderID=hash2id(hash), week=week)
+                           responderID=sid, week=week)
     s.responded = False if rsp == "" else True
     s.response = rsp
     s.save()

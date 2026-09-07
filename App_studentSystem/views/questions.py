@@ -18,11 +18,11 @@ def display_all(request:HttpRequest):
 
 
 def display_mine(request: HttpRequest):
-    hash, r = checkcookies(request)
+    sid, r = checkcookies(request)
     if r:
         return r
     msg, week = checkweek(request)
-    quesList = list(getmyquestions(hash).filter(week=week))
+    quesList = list(getmyquestions(sid).filter(week=week))
     msg["quesNum"] = len(quesList)
     msg["questions"] = quesList2dict(quesList)
 
@@ -38,37 +38,46 @@ def display_mine(request: HttpRequest):
 
 
 def deleting(request: HttpRequest):
-    hash, r = checkcookies(request)
+    sid, r = checkcookies(request)
     if r:
         return r
-    msg, week = checkweek(request)
     ret = redirect("/student/display_mine")
     if request.POST:
-        ret.set_cookie("deleted", request.POST["to_delete"])
         outputPost(request)
-        del_ques(int(request.POST["to_delete"]))
+        to_delete = request.POST.get("to_delete")
+        # only allow soft-deleting one's own question (fixes ownership bypass)
+        if to_delete and del_ques(int(to_delete), sid):
+            ret.set_cookie("deleted", to_delete)
     return ret
 
-def del_ques(quespk:int):
-    q = quesBaseInfo.objects.get(pk=quespk)
+
+def del_ques(quespk: int, sid: int) -> bool:
+    q = quesBaseInfo.objects.filter(pk=quespk, studentID=sid).first()
+    if not q:
+        return False
     q.visible = False
     q.save()
+    return True
 
 
 def undo_delete(request: HttpRequest):
-    hash, r = checkcookies(request)
+    sid, r = checkcookies(request)
     if r:
         return r
-    msg, week = checkweek(request)
     ret = redirect("/student/display_mine")
     if request.POST:
-        ret.set_cookie("undo_deleted", request.POST["undo_delete"])
         outputPost(request)
-        undel_ques(int(request.POST["undo_delete"]))
+        undo_delete = request.POST.get("undo_delete")
+        # only allow undoing deletion of one's own question
+        if undo_delete and undel_ques(int(undo_delete), sid):
+            ret.set_cookie("undo_deleted", undo_delete)
     return ret
 
 
-def undel_ques(quespk: int):
-    q = quesBaseInfo.objects.get(pk=quespk)
+def undel_ques(quespk: int, sid: int) -> bool:
+    q = quesBaseInfo.objects.filter(pk=quespk, studentID=sid).first()
+    if not q:
+        return False
     q.visible = True
     q.save()
+    return True

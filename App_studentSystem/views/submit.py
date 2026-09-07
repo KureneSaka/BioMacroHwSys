@@ -1,20 +1,25 @@
 # -*- coding: utf-8 -*-
 from django.http import HttpRequest
 from django.shortcuts import render, redirect
+from django.contrib import messages
 from .utils import *
 
 def submit(request:HttpRequest):
-    hash, r = checkcookies(request)
+    sid, r = checkcookies(request)
     if r:
         return r
     msg, week = checkweek(request)
     if request.POST:
         outputPost(request)
-        quesList=request.POST.getlist("quesList")
-        for q in quesList:
-            if q:
-                savequestion(hash, q.strip(), week)
-    originQuesNum = hash2quesnum(hash, week)
+        closed = check_submit_open(week)
+        if closed:
+            messages.error(request, closed)
+        else:
+            quesList=request.POST.getlist("quesList")
+            for q in quesList:
+                if q:
+                    savequestion(sid, q.strip(), week)
+    originQuesNum = hash2quesnum(sid, week)
     msg["StuQuesNum"] = originQuesNum
     labelList = []
     for i in range(1, 6):
@@ -23,6 +28,6 @@ def submit(request:HttpRequest):
     return render(request, "student/submit.html", msg)
 
 
-def savequestion(hash: str, ques: str, week:int):
-    q = quesBaseInfo(question=ques, studentID=hash2id(hash), week=week)
+def savequestion(sid: int, ques: str, week:int):
+    q = quesBaseInfo(question=ques, studentID=sid, week=week)
     q.save()
